@@ -1,12 +1,10 @@
-import icon from "../../icon.png"
-
-export default function App() {
+export default function App({ logo }: Readonly<{ logo: string }>) {
 
     return <main className="welcome">
 
         <div className="welcome-mark" aria-hidden="true">
 
-            <img src={icon} alt="" />
+            <img src={logo} alt="" />
 
         </div>
 
