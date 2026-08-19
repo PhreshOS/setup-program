@@ -1,6 +1,6 @@
 export default function App() {
 
-    return <main className="welcome-card">
+    return <main className="welcome-message">
 
         <span className="label">Setup</span>
 

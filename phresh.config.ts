@@ -42,11 +42,12 @@ export default defineConfig({
         // `index.html` and all files reachable from it.
         location: "dist/client",
 
-        // Initial Window values. The title defaults to the Program name when
-        // omitted. This example chooses a fixed initial size while leaving
-        // placement, layer, and minimized state to their system defaults.
+        // Initial Window values. Setup occupies the centered middle half of
+        // both workspace dimensions and uses the frameless over layer.
         title: "Setup",
-        size: { width: 640, height: 440 },
+        size: { width: "1/2", height: "1/2" },
+        position: { x: "1/4", y: "1/4" },
+        layer: "over",
 
         // Geometry accepts finite pixel numbers or linear values. Fractions
         // and percentages are relative to the selected desktop layer, and a
@@ -55,8 +56,8 @@ export default defineConfig({
         // position: { x: "1/2 + 10", y: 40 },
 
         // `window` is the ordinary framed layer. `under` and `over` are
-        // structurally isolated, frameless desktop layers.
-        // layer: "window",
+        // structurally isolated, frameless desktop layers. An over Client may
+        // explicitly request a server-owned Window Surface at runtime.
 
         // The initial Window may also be declared to open minimized.
         // minimize: true,
