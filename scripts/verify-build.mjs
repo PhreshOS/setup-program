@@ -16,7 +16,7 @@ const page = readFileSync("dist/client/index.html", "utf8")
 const client = readdirSync("dist/client/assets").map(file => readFileSync(`dist/client/assets/${file}`, "utf8")).join("\n")
 
 assert.match(page, /<html/i)
-assert.match(client, /surfaceSet/)
+assert.match(client, /localWindowSurfaceSet/)
 assert.match(client, /Your space is ready/)
 assert.match(client, /prefers-reduced-motion/)
 assert.equal(existsSync("dist/server"), false)

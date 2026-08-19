@@ -8,10 +8,7 @@ const [theme] = await Promise.all([
 
     host.theme.snapshot(),
 
-    current.window.surface.set({
-        radius: "medium",
-        transaction: { duration: 240, easing: "ease-out" }
-    })
+    current.localWindow.surface.set({ radius: "medium" }, { duration: 240, easing: "ease-out" })
 ])
 
 const style = document.documentElement.style
