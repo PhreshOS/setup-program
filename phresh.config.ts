@@ -22,16 +22,26 @@ export default defineConfig({
     // these values determines the Program's identity.
     name: "Setup",
     description: "The first welcome to PhreshOS.",
-    version: "0.1.1",
+    version: "0.1.2",
 
     // One authored PNG. Installation gives it a canonical name and the system
     // derives the standard hosted icon sizes from it.
     icon: "icon.png",
 
-    // Prepares the production Client directory. The CLI runs it from this
+    // Prepares both production endpoint directories. The CLI runs it from this
     // project before `phresh start`, `phresh install`, and `phresh pack`.
     // `phresh dev` does not build and uses the declarations below instead.
-    buildCommand: "vite build --config vite.client.ts",
+    buildCommand: "vite-node --config vite.server.ts source/build.ts",
+
+    // The Server owns Setup's Window Surface. That state therefore exists at
+    // the system boundary independently of the browser view that renders it.
+    server: {
+        location: "dist/server",
+        startCommand: "node main.js",
+        development: {
+            startCommand: "vite-node --watch --config vite.server.ts source/server/main.ts"
+        }
+    },
 
     // The Client declaration also defines the initial Window created for it.
     // It contains presentation defaults only; live Window state belongs to
@@ -56,8 +66,8 @@ export default defineConfig({
         // position: { x: "1/2 + 10", y: 40 },
 
         // `window` is the ordinary framed layer. `under` and `over` are
-        // structurally isolated, frameless desktop layers. An over Client may
-        // explicitly request a server-owned Window Surface at runtime.
+        // structurally isolated, frameless desktop layers. An endpoint of an
+        // over Process may explicitly request a server-owned Window Surface.
 
         // The initial Window may also be declared to open minimized.
         // minimize: true,
