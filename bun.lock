@@ -5,8 +5,8 @@
     "": {
       "name": "setup",
       "dependencies": {
-        "@phreshos/client": "^0.1.5",
-        "@phreshos/core": "^0.1.5",
+        "@phreshos/client": "^0.1.7",
+        "@phreshos/core": "^0.1.6",
         "react": "^19.2.8",
         "react-dom": "^19.2.8",
       },
@@ -31,9 +31,9 @@
 
     "@phreshos/cli": ["@phreshos/cli@0.1.10", "", { "dependencies": { "@clack/prompts": "^1.7.0", "@phreshos/core": "^0.1.1", "adm-zip": "^0.6.0", "commander": "^15.0.0", "picocolors": "^1.1.1" }, "bin": { "phresh": "dist/cli.js" } }, "sha512-RGRvRzemU/rxkKCkaN5KSNdkKMCFoDyM35T7+mKcObIYngat3sjs5EuE52ZigELKA0ENIAvto47PRfyaUSF2xg=="],
 
-    "@phreshos/client": ["@phreshos/client@0.1.5", "", { "peerDependencies": { "@phreshos/core": "^0.1.5" } }, "sha512-fUwwjPBYDCiZzfARlE8HpK+o2Agb4WhHMDhcBHzaSK7E3tNWhmhjyLF9Q8TL+y4mC4jjaMhpzt11c/iArl6kIQ=="],
+    "@phreshos/client": ["@phreshos/client@0.1.7", "", { "peerDependencies": { "@phreshos/core": "^0.1.6" } }, "sha512-cEQrauzhhdYap86VTOre+dwAKT7gfWEoV5Re+p9XQR8Q+lktv8nyduUGhBBa9fjh96Tfy3KDSPWYALDCodalTg=="],
 
-    "@phreshos/core": ["@phreshos/core@0.1.5", "", {}, "sha512-BJx9OkyhWYJCHc2NElH/RI/oZ9cqCHAIIecoWGPz5vjcSJb6UFhmIds+UHBPBh3pgia9G+WzXicSMRqkhVFaNQ=="],
+    "@phreshos/core": ["@phreshos/core@0.1.6", "", {}, "sha512-x6xB/cNTyYa1BGvug4+eWxBJb0Y3dFEO1tP3VUX/1mCxzH6EoaH3d1w9L0GgZ19/DY+zKP9I2dXztLEkE78sfg=="],
 
     "@rolldown/binding-android-arm64": ["@rolldown/binding-android-arm64@1.2.4", "", { "os": "android", "cpu": "arm64" }, "sha512-jHC2cnyKz5xU2fhECtFl8OZ83cYNt13GZQD+0uMJ/X3o+ijmd56okHhTUwxVSHPx1IRVIJEZ1/1pPzeLCU6XKA=="],
 
