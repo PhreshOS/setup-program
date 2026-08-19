@@ -8,6 +8,10 @@
         "target": "ESNext",
         "jsx": "react-jsx",
         "strict": true,
-        "noEmit": true
+        "noEmit": true,
+        "types": [
+            "@types/node",
+            "vite/client"
+        ]
     }
 }

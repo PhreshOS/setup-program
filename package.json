@@ -11,7 +11,7 @@
         "dev": "phresh dev",
         "start": "phresh start",
         "pack": "phresh pack",
-        "verify": "node --run check && node --run build && node scripts/verify-build.mjs"
+        "verify": "node --run check && node --run build && vite-node scripts/verify-build.mjs"
     },
     "author": "Zohayr SLILEH",
     "license": "MIT",
@@ -41,6 +41,7 @@
         "@types/react-dom": "^19.2.4",
         "@vitejs/plugin-react": "^6.0.5",
         "typescript": "^7.0.2",
-        "vite": "^8.2.1"
+        "vite": "^8.2.1",
+        "vite-node": "^6.0.0"
     }
 }
