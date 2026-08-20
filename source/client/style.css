@@ -14,10 +14,11 @@
 
 * { box-sizing: border-box; }
 
-html, body { width: 100%; min-height: 100%; background: transparent; }
+html, body { width: 100%; height: 100%; min-height: 0; background: transparent; }
 
 body {
-    min-height: 100vh;
+    height: 100vh;
+    min-height: 0;
     margin: 0;
     display: grid;
     place-items: center;
@@ -26,18 +27,19 @@ body {
 
 .welcome {
     width: min(34rem, 100%);
-    min-height: 100vh;
+    height: 100%;
+    min-height: 0;
     display: grid;
     align-content: center;
     justify-items: center;
-    gap: calc(var(--unit) * 5);
-    padding: calc(var(--unit) * 7);
+    gap: clamp(var(--unit), 2.5vh, calc(var(--unit) * 5));
+    padding: clamp(calc(var(--unit) * 1.5), 4vh, calc(var(--unit) * 7));
     margin: auto;
     text-align: center;
 }
 
 .welcome-mark {
-    width: calc(var(--unit) * 12);
+    width: clamp(calc(var(--unit) * 7), 16vh, calc(var(--unit) * 12));
     aspect-ratio: 1;
     display: grid;
     place-items: center;
@@ -54,7 +56,7 @@ body {
 .welcome-copy {
     display: grid;
     justify-items: center;
-    gap: calc(var(--unit) * 2);
+    gap: clamp(calc(var(--unit) * 0.75), 1.75vh, calc(var(--unit) * 2));
 }
 
 .welcome-copy > * {
@@ -74,7 +76,7 @@ body {
     margin: 0;
     max-width: 12ch;
     color: var(--theme-foreground);
-    font-size: clamp(2.2rem, 5vw, 3.75rem);
+    font-size: clamp(2rem, min(9vh, 5vw), 3.75rem);
     line-height: 0.98;
     letter-spacing: -0.055em;
     text-wrap: balance;
@@ -85,8 +87,8 @@ body {
     margin: 0;
     max-width: 35ch;
     color: color-mix(in oklch, var(--theme-foreground) 72%, transparent);
-    font-size: clamp(0.95rem, 1.6vw, 1.05rem);
-    line-height: 1.6;
+    font-size: clamp(0.875rem, min(2.7vh, 1.6vw), 1.05rem);
+    line-height: 1.45;
     text-wrap: balance;
     animation-delay: 120ms;
 }
@@ -139,6 +141,30 @@ body {
     box-shadow: 0 0 0 calc(var(--unit) / 2) color-mix(in oklch, var(--theme-accent) 16%, transparent);
 }
 
+.welcome[data-closing] .continuation {
+    animation: content-out var(--motion-duration) ease-in both;
+}
+
+.welcome[data-closing] .close-setup {
+    animation: content-out var(--motion-duration) ease-in 40ms both;
+}
+
+.welcome[data-closing] .welcome-copy p {
+    animation: content-out var(--motion-duration) ease-in 80ms both;
+}
+
+.welcome[data-closing] .welcome-copy h1 {
+    animation: content-out var(--motion-duration) ease-in 120ms both;
+}
+
+.welcome[data-closing] .eyebrow {
+    animation: content-out var(--motion-duration) ease-in 160ms both;
+}
+
+.welcome[data-closing] .welcome-mark {
+    animation: mark-out var(--motion-duration) ease-in 200ms both;
+}
+
 @keyframes mark-in {
     from { opacity: 0; transform: translateY(calc(var(--unit) * 2)) scale(0.92); }
     to { opacity: 1; transform: translateY(0) scale(1); }
@@ -149,9 +175,19 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes mark-out {
+    from { opacity: 1; transform: translateY(0) scale(1); }
+    to { opacity: 0; transform: translateY(calc(var(--unit) * 2)) scale(0.92); }
+}
+
+@keyframes content-out {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(calc(var(--unit) * 1.5)); }
+}
+
 @media (max-width: 34rem) {
-    .welcome { padding: calc(var(--unit) * 4); }
-    .welcome-mark { width: calc(var(--unit) * 10); }
+    .welcome { padding-inline: calc(var(--unit) * 4); }
+    .welcome-mark { max-width: calc(var(--unit) * 10); }
 }
 
 @media (prefers-reduced-motion: reduce) {

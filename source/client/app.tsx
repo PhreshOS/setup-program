@@ -1,19 +1,29 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 
 export default function App({ logo, close }: Readonly<{ logo: string, close: () => Promise<void> }>) {
 
+    const welcome = useRef<HTMLElement>(null)
+
     const [closing, setClosing] = useState(false)
 
-    function closeSetup() {
+    async function closeSetup() {
 
         if (closing) return
 
         setClosing(true)
 
-        close().catch(() => setClosing(false))
+        await new Promise<void>(resolve => requestAnimationFrame(() => resolve()))
+
+        const animations = welcome.current?.getAnimations({ subtree: true }) ?? []
+
+        await Promise.allSettled(animations.map(animation => animation.finished))
+
+        try { await close() }
+
+        catch { setClosing(false) }
     }
 
-    return <main className="welcome">
+    return <main ref={welcome} className="welcome" data-closing={closing || undefined}>
 
         <div className="welcome-mark" aria-hidden="true">
 
@@ -31,7 +41,7 @@ export default function App({ logo, close }: Readonly<{ logo: string, close: () 
 
         </div>
 
-        <button className="close-setup" type="button" disabled={closing} onClick={closeSetup}>
+        <button className="close-setup" type="button" disabled={closing} onClick={() => void closeSetup()}>
 
             {closing ? "Closing…" : "Close Setup"}
 
