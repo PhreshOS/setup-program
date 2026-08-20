@@ -12,7 +12,7 @@ const [theme] = await Promise.all([
 
     host.theme.snapshot(),
 
-    current.localWindow.surface.set({ radius: "medium" }, { duration: 240, easing: "ease-out" }),
+    current.window.local.surface.set({ radius: "medium" }, { duration: 240, easing: "ease-out" }),
 
     image.decode()
 ])
