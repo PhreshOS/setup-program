@@ -1,7 +1,7 @@
 {
     "name": "setup-program",
     "private": true,
-    "version": "0.1.7",
+    "version": "0.1.8",
     "description": "The official PhreshOS welcome and initial setup Program.",
     "type": "module",
     "packageManager": "bun@1.3.14",
@@ -29,7 +29,7 @@
         "setup"
     ],
     "dependencies": {
-        "@phreshos/client": "^0.1.7",
+        "@phreshos/client": "^0.1.8",
         "@phreshos/core": "^0.1.6",
         "react": "^19.2.8",
         "react-dom": "^19.2.8"
