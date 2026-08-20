@@ -1,4 +1,17 @@
-export default function App({ logo }: Readonly<{ logo: string }>) {
+import { useState } from "react"
+
+export default function App({ logo, close }: Readonly<{ logo: string, close: () => Promise<void> }>) {
+
+    const [closing, setClosing] = useState(false)
+
+    function closeSetup() {
+
+        if (closing) return
+
+        setClosing(true)
+
+        close().catch(() => setClosing(false))
+    }
 
     return <main className="welcome">
 
@@ -17,6 +30,12 @@ export default function App({ logo }: Readonly<{ logo: string }>) {
             <p>Setup will guide the first decisions that make this system yours.</p>
 
         </div>
+
+        <button className="close-setup" type="button" disabled={closing} onClick={closeSetup}>
+
+            {closing ? "Closing…" : "Close Setup"}
+
+        </button>
 
         <p className="continuation" role="status">
 

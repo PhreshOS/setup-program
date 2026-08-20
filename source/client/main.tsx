@@ -25,4 +25,4 @@ style.setProperty("--theme-accent", theme.accent)
 
 const root = client.createRoot(document.body)
 
-root.render(<StrictMode><App logo={logo} /></StrictMode>)
+root.render(<StrictMode><App logo={logo} close={() => current.stop()} /></StrictMode>)

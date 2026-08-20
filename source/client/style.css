@@ -91,6 +91,35 @@ body {
     animation-delay: 120ms;
 }
 
+.close-setup {
+    min-height: calc(var(--unit) * 5);
+    padding: calc(var(--unit) * 1.25) calc(var(--unit) * 3);
+    border: 1px solid color-mix(in oklch, var(--theme-accent) 48%, transparent);
+    border-radius: calc(var(--unit) * 1.25);
+    color: var(--theme-foreground);
+    background: color-mix(in oklch, var(--theme-accent) 20%, transparent);
+    box-shadow: 0 calc(var(--unit) / 2) calc(var(--unit) * 2) color-mix(in oklch, var(--theme-accent) 12%, transparent);
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 650;
+    cursor: pointer;
+    transition: background-color 140ms ease-out, border-color 140ms ease-out, transform 140ms ease-out;
+    animation: content-in var(--motion-duration) var(--motion-easing) 160ms both;
+}
+
+.close-setup:hover:not(:disabled) {
+    border-color: color-mix(in oklch, var(--theme-accent) 72%, transparent);
+    background: color-mix(in oklch, var(--theme-accent) 30%, transparent);
+    transform: translateY(calc(var(--unit) / -4));
+}
+
+.close-setup:focus-visible {
+    outline: calc(var(--unit) / 2) solid color-mix(in oklch, var(--theme-accent) 64%, transparent);
+    outline-offset: calc(var(--unit) / 2);
+}
+
+.close-setup:disabled { cursor: default; opacity: 0.64; }
+
 .continuation {
     margin: 0;
     display: flex;
@@ -99,7 +128,7 @@ body {
     color: color-mix(in oklch, var(--theme-foreground) 48%, transparent);
     font-size: 0.75rem;
     line-height: 1.4;
-    animation: content-in var(--motion-duration) var(--motion-easing) 160ms both;
+    animation: content-in var(--motion-duration) var(--motion-easing) 200ms both;
 }
 
 .continuation span {
@@ -128,6 +157,7 @@ body {
 @media (prefers-reduced-motion: reduce) {
     .welcome-mark,
     .welcome-copy > *,
+    .close-setup,
     .continuation {
         animation: none;
     }
