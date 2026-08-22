@@ -12,7 +12,7 @@ const [theme] = await Promise.all([
 
     host.theme.snapshot(),
 
-    current.window.local.surface.set({ radius: "medium" }, { duration: 240, easing: "ease-out" }),
+    current.window.local.surface.set({ radius: "large" }, { duration: 240, easing: "ease-out" }),
 
     image.decode()
 ])
@@ -31,7 +31,7 @@ async function closeSetup() {
 
     await current.window.local.surface.set(
 
-        { opacity: 0, radius: "medium" },
+        { opacity: 0, radius: "large" },
 
         { duration: 240, easing: "ease-in", wait: true }
     )
@@ -42,7 +42,7 @@ async function closeSetup() {
 
         await current.window.local.surface.set(
 
-            { radius: "medium" },
+            { radius: "large" },
 
             { duration: 240, easing: "ease-out", wait: true }
         )

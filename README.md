@@ -15,3 +15,6 @@ phresh start
 ```
 
 The Program declaration lives in `phresh.config.ts`.
+
+Setup is frameless, so its local Surface uses the Theme's `large` radius level,
+matching the outer radius of standard Windows.
