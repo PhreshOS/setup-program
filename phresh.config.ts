@@ -85,7 +85,7 @@ export default defineConfig({
             // server must allow the desktop origin through CORS; this project's
             // Vite configuration does so.
             url: "http://localhost:5200/",
-            startCommand: "vite dev"
+            startCommand: "vite dev --config vite.client.ts"
         }
     }
 })

@@ -1,23 +1,17 @@
-import react, { reactCompilerPreset } from "@vitejs/plugin-react"
-import babel from "@rolldown/plugin-babel"
 import { defineConfig } from "vite"
 import { resolve } from "node:path"
 
 export default defineConfig({
-    root: "source/client",
-    plugins: [react(), babel({ presets: [reactCompilerPreset()] })],
-    base: "./",
+    root: "source/server",
     resolve: {
-        tsconfigPaths: true,
-        dedupe: ["react"]
-    },
-    server: {
-        cors: true,
-        port: 5200,
-        strictPort: true
+        tsconfigPaths: true
     },
     build: {
+        ssr: true,
         emptyOutDir: true,
-        outDir: resolve(import.meta.dirname, "dist/client")
+        outDir: resolve(import.meta.dirname, "dist/server"),
+        rolldownOptions: {
+            input: "main.ts"
+        }
     }
 })
