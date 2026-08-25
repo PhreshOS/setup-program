@@ -14,6 +14,7 @@ const releases = new ProgramReleases(async function (input) {
 
         return Response.json([
             { name: "phresh-program", archived: false, fork: false },
+            { name: "setup-program", archived: false, fork: false },
             { name: "system", archived: false, fork: false }
         ])
     }
@@ -42,7 +43,7 @@ const releases = new ProgramReleases(async function (input) {
     ])
 })
 
-await releases.load()
+assert.equal(requestCount, 0, "Constructing the catalog must not request GitHub")
 
 assert.deepEqual(await releases.latest("phresh"), {
     schema: 1,
@@ -82,11 +83,26 @@ assert.equal(catalogRequested, "https://api.github.com/orgs/PhreshOS/repos?type=
 
 const loadedRequestCount = requestCount
 
-await releases.load()
 await releases.latest("phresh")
 await releases.list(1, 20)
 
 assert.equal(requestCount, loadedRequestCount, "The loaded catalog must not request GitHub again")
+
+let failedRequests = 0
+
+const failed = new ProgramReleases(async function () {
+    failedRequests++
+
+    if (failedRequests === 1) return new Response(null, { status: 503, statusText: "Unavailable" })
+
+    return Response.json([])
+})
+
+await assert.rejects(() => failed.list(1, 20), /503 Unavailable/)
+await assert.rejects(() => failed.list(1, 20), /503 Unavailable/)
+assert.equal(failedRequests, 1, "A failed catalog load must be retained")
+assert.deepEqual(await failed.list(1, 20, true), { releases: [], page: 1, nextPage: null })
+assert.equal(failedRequests, 2, "An explicit retry must perform one new load")
 
 function githubRelease(version: string, overrides: Record<string, unknown> = {}) {
     return {

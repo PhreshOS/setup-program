@@ -60,6 +60,12 @@ button { font: inherit; }
     gap: calc(var(--unit) * 2);
 }
 
+.program-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--unit);
+}
+
 .programs-eyebrow {
     color: color-mix(in oklch, var(--theme-foreground) 52%, transparent);
     font-size: 0.625rem;
@@ -70,12 +76,13 @@ button { font: inherit; }
 
 .programs h1 {
     margin: calc(var(--unit) / 2) 0 0;
-    font-size: clamp(1.5rem, 5vw, 2rem);
+    font-size: clamp(1.1rem, 3vw, 1.3rem);
     line-height: 1;
-    letter-spacing: -0.045em;
+    letter-spacing: -0.025em;
 }
 
 .resource-state button,
+.install-programs,
 .close-setup,
 .catalog-state button,
 .catalog-more {
@@ -91,9 +98,15 @@ button { font: inherit; }
 }
 
 .close-setup:disabled,
+.install-programs:disabled,
 .catalog-more:disabled {
     cursor: default;
     opacity: 0.6;
+}
+
+.install-programs {
+    color: color-mix(in oklch, var(--theme-accent) 72%, var(--theme-foreground));
+    background: color-mix(in oklch, var(--theme-accent) 18%, transparent);
 }
 
 .operation-error,
@@ -101,6 +114,33 @@ button { font: inherit; }
     margin: 0;
     color: #b42318;
     font-size: 0.75rem;
+}
+
+.installation-progress {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(calc(var(--unit) * 10), 1fr) auto minmax(0, auto);
+    align-items: center;
+    gap: var(--unit);
+    color: color-mix(in oklch, var(--theme-foreground) 62%, transparent);
+    font-size: 0.68rem;
+}
+
+.installation-progress progress {
+    width: 100%;
+    height: calc(var(--unit) / 1.5);
+    border: 0;
+    border-radius: 999px;
+    overflow: hidden;
+    accent-color: var(--theme-accent);
+}
+
+.installation-progress strong {
+    overflow: hidden;
+    color: var(--theme-foreground);
+    font-weight: 650;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .program-catalog {
@@ -266,6 +306,10 @@ button { font: inherit; }
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+.program-details .installation-failed { color: #b42318; }
+.program-details .installation-installed,
+.program-details .installation-already-installed { color: #067647; }
 
 .catalog-more { justify-self: start; }
 

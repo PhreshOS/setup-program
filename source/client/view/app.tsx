@@ -1,10 +1,12 @@
 import type { ThemeProperties } from "@phreshos/core"
 import usePromise from "@libs/react-promise"
+import type { InstallationSnapshot, ProgramInstallation } from "@server/core/program-installer"
 import type { ProgramRelease } from "@server/core/program-releases"
 import type { CSSProperties } from "react"
 
-export default function App({ theme, close, catalog }: Properties) {
+export default function App({ theme, close, catalog, installation }: Properties) {
     const closing = usePromise(close)
+    const installing = installation.snapshot?.status === "running"
 
     return <main
         className="programs"
@@ -21,23 +23,59 @@ export default function App({ theme, close, catalog }: Properties) {
                 <h1>Programs</h1>
             </div>
 
-            <button
-                className="close-setup"
-                type="button"
-                disabled={closing.isPending}
-                onClick={() => void closing.safeExecute()}
-            >
-                {closing.isPending ? "Closing…" : "Close"}
-            </button>
+            <div className="program-actions">
+                <button
+                    className="install-programs"
+                    type="button"
+                    disabled={
+                        catalog.isPending
+                        || catalog.exception !== undefined
+                        || catalog.releases.length === 0
+                        || installation.isPending
+                        || installing
+                        || installation.snapshot?.status === "completed"
+                    }
+                    onClick={installation.install}
+                >
+                    {installLabel(installation)}
+                </button>
+
+                <button
+                    className="close-setup"
+                    type="button"
+                    disabled={closing.isPending || installing}
+                    onClick={() => void closing.safeExecute()}
+                >
+                    {closing.isPending ? "Closing…" : "Close"}
+                </button>
+            </div>
         </header>
 
-        {closing.exception && <p className="operation-error" role="alert">{message(closing.exception.current)}</p>}
+        <OperationState closing={closing.exception?.current} installation={installation} />
 
-        <ProgramCatalog catalog={catalog} />
+        <ProgramCatalog catalog={catalog} installation={installation.snapshot} />
     </main>
 }
 
-function ProgramCatalog({ catalog }: Readonly<{ catalog: Catalog }>) {
+function OperationState({ closing, installation }: Readonly<{ closing: unknown, installation: Installation }>) {
+    const snapshot = installation.snapshot
+
+    if (closing !== undefined || installation.exception !== undefined) {
+        return <p className="operation-error" role="alert">{message(closing ?? installation.exception)}</p>
+    }
+
+    if (!snapshot || snapshot.status === "idle") return <div />
+
+    const active = snapshot.programs.find(program => !terminal(program.status))
+
+    return <div className="installation-progress" role="status">
+        <progress max={snapshot.total || 1} value={snapshot.completed} />
+        <span>{snapshot.completed} of {snapshot.total}</span>
+        <strong>{installationSummary(snapshot, active)}</strong>
+    </div>
+}
+
+function ProgramCatalog({ catalog, installation }: Readonly<{ catalog: Catalog, installation?: InstallationSnapshot }>) {
     return <section className="program-catalog" aria-label="Official Programs">
         <header>
             <span>Available</span>
@@ -58,7 +96,11 @@ function ProgramCatalog({ catalog }: Readonly<{ catalog: Catalog }>) {
         </p>}
 
         {catalog.releases.length > 0 && <div className="program-grid">
-            {catalog.releases.map(release => <ProgramEntry key={release.identity} release={release} />)}
+            {catalog.releases.map(release => <ProgramEntry
+                key={release.identity}
+                release={release}
+                installation={installation?.programs.find(program => program.identity === release.identity)}
+            />)}
         </div>}
 
         {catalog.continuationException !== undefined && <p className="catalog-more-error" role="alert">
@@ -76,7 +118,7 @@ function ProgramCatalog({ catalog }: Readonly<{ catalog: Catalog }>) {
     </section>
 }
 
-function ProgramEntry({ release }: Readonly<{ release: ProgramRelease }>) {
+function ProgramEntry({ release, installation }: Readonly<{ release: ProgramRelease, installation?: ProgramInstallation }>) {
     return <article className="program-entry">
         <img className="program-icon" src={release.icon} alt="" loading="lazy" />
 
@@ -105,6 +147,12 @@ function ProgramEntry({ release }: Readonly<{ release: ProgramRelease }>) {
                 <dt>Metadata</dt>
                 <dd>Schema {release.schema}</dd>
             </div>
+            {installation && <div>
+                <dt>Installation</dt>
+                <dd className={`installation-${installation.status}`} title={installation.error ?? undefined}>
+                    {installation.error ?? installation.status.replaceAll("-", " ")}
+                </dd>
+            </div>}
         </dl>
     </article>
 }
@@ -117,13 +165,48 @@ function ProgramValues({ label, values }: Readonly<{ label: string, values: read
 }
 
 function message(value: unknown) {
-    return value instanceof Error ? value.message : "Setup could not close"
+    if (value instanceof Error) return value.message
+    if (typeof value === "string" && value) return value
+
+    return "Setup could not complete the operation"
+}
+
+function installLabel(installation: Installation) {
+    if (installation.isPending) return "Preparing…"
+
+    const snapshot = installation.snapshot
+
+    if (snapshot?.status === "running") return `Installing ${snapshot.completed}/${snapshot.total}`
+    if (snapshot?.status === "completed") return "Installed"
+    if (snapshot?.status === "failed") return "Try installation again"
+
+    return "Install all"
+}
+
+function installationSummary(snapshot: InstallationSnapshot, active: ProgramInstallation | undefined) {
+    if (snapshot.status === "completed") return "All Programs are installed"
+    if (snapshot.status === "failed") return `${snapshot.programs.filter(program => program.status === "failed").length} failed`
+    if (!active) return "Finishing installation…"
+
+    return `${active.name}: ${active.status.replaceAll("-", " ")}`
+}
+
+function terminal(status: ProgramInstallation["status"]) {
+    return status === "installed" || status === "already-installed" || status === "failed"
 }
 
 type Properties = Readonly<{
     theme: Readonly<ThemeProperties>
     close: () => Promise<void>
     catalog: Catalog
+    installation: Installation
+}>
+
+type Installation = Readonly<{
+    snapshot?: InstallationSnapshot
+    isPending: boolean
+    exception: unknown
+    install: () => void
 }>
 
 export type Catalog = Readonly<{

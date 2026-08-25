@@ -1,8 +1,9 @@
 import { HostProvider, useHostTheme } from "@phreshos/react"
 import Application from "@client/core/application"
 import usePromise from "@libs/react-promise"
+import type { InstallationSnapshot } from "@server/core/program-installer"
 import type { ProgramReleasePage } from "@server/core/program-releases"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import App from "./app"
 import "./style.css"
 
@@ -17,6 +18,7 @@ function Setup() {
     const application = useMemo(() => new Application(), [])
     const preparation = usePromise(() => application.prepare(), [application])
     const catalog = useCatalog(application)
+    const installation = useInstallation(application)
 
     if (preparation.isPending) return <ResourceState message="Preparing Setup…" />
 
@@ -25,11 +27,12 @@ function Setup() {
         retry={() => void preparation.safeExecute()}
     />
 
-    return <App theme={theme} close={() => application.close()} catalog={catalog} />
+    return <App theme={theme} close={() => application.close()} catalog={catalog} installation={installation} />
 }
 
 function useCatalog(application: Application) {
-    const initial = usePromise(() => application.programReleases(), [application])
+    const [attempt, setAttempt] = useState(0)
+    const initial = usePromise(() => application.programReleases(1, 20, attempt > 0), [application, attempt])
     const continuation = usePromise((page: number) => application.programReleases(page))
     const [additional, setAdditional] = useState<readonly ProgramReleasePage[]>([])
     const pages = initial.solve ? [initial.solve, ...additional] : []
@@ -48,7 +51,7 @@ function useCatalog(application: Application) {
 
     function retry() {
         setAdditional([])
-        void initial.safeExecute()
+        setAttempt(current => current + 1)
     }
 
     return {
@@ -60,6 +63,52 @@ function useCatalog(application: Application) {
         hasMore: nextPage !== null,
         more: () => void more(),
         retry
+    }
+}
+
+function useInstallation(application: Application) {
+    const snapshot = usePromise(() => application.installation(), [application])
+    const starting = usePromise(() => application.installAll())
+    const ready = useRef(false)
+    const buffered = useRef<InstallationSnapshot | undefined>(undefined)
+
+    useEffect(() => application.subscribeInstallation(next => {
+        if (!ready.current) {
+            if (!buffered.current || next.revision >= buffered.current.revision) buffered.current = next
+            return
+        }
+
+        snapshot.dispatch(current => next.revision >= current.revision ? next : current)
+    }), [application, snapshot.dispatch])
+
+    useEffect(() => {
+        if (!snapshot.solve) {
+            ready.current = false
+            return
+        }
+
+        ready.current = true
+
+        const next = buffered.current
+
+        buffered.current = undefined
+
+        if (next && next.revision >= snapshot.solve.revision) snapshot.dispatch(next)
+    }, [snapshot.dispatch, snapshot.solve])
+
+    async function install() {
+        const next = await starting.safeExecute()
+
+        if (next && snapshot.solve) {
+            snapshot.dispatch(current => next.revision >= current.revision ? next : current)
+        }
+    }
+
+    return {
+        snapshot: snapshot.solve,
+        isPending: snapshot.isPending,
+        exception: snapshot.exception?.current ?? starting.exception?.current,
+        install: () => void install()
     }
 }
 

@@ -67,34 +67,27 @@ type Fetcher = (input: string | URL | Request, init?: RequestInit) => Promise<Re
 
 /** Resolves complete stable official Program releases from GitHub. */
 export default class ProgramReleases {
-    private catalog: readonly ProgramRelease[] | undefined
+    private state: CatalogState | undefined
     private loading: Promise<readonly ProgramRelease[]> | undefined
 
     public constructor(private readonly fetcher: Fetcher = fetch) {}
 
-    /** Loads the complete authoritative catalog exactly once for this Server run. */
-    public async load(): Promise<void> {
-        if (this.catalog) return
-
-        const loading = this.loading ??= this.readCatalog()
-
-        try {
-            this.catalog = await loading
-        } finally {
-            if (!this.catalog) this.loading = undefined
-        }
-    }
-
-    public latest(identity: string): ProgramRelease {
-        const selected = this.loaded().find(release => release.identity === identity)
+    public async latest(identity: string): Promise<ProgramRelease> {
+        const selected = (await this.catalog()).find(release => release.identity === identity)
 
         if (!selected) throw new Error(`No stable ${identity} Program release is available`)
 
         return selected
     }
 
-    public list(page: number, limit: number): ProgramReleasePage {
-        const catalog = this.loaded()
+    public all() {
+        return this.catalog()
+    }
+
+    public async list(page: number, limit: number, retry = false): Promise<ProgramReleasePage> {
+        if (retry && this.state?.status === "rejected") this.state = undefined
+
+        const catalog = await this.catalog()
         const start = (page - 1) * limit
         const releases = catalog.slice(start, start + limit)
 
@@ -105,10 +98,28 @@ export default class ProgramReleases {
         })
     }
 
-    private loaded() {
-        if (!this.catalog) throw new Error("The Program catalog has not been loaded")
+    /** Shares and retains the first settled GitHub load for this Server run. */
+    private async catalog(): Promise<readonly ProgramRelease[]> {
+        if (this.state?.status === "fulfilled") return this.state.catalog
+        if (this.state?.status === "rejected") throw this.state.error
 
-        return this.catalog
+        const loading = this.loading ??= this.readCatalog()
+
+        try {
+            const catalog = await loading
+
+            this.state = { status: "fulfilled", catalog }
+
+            return catalog
+        } catch (exception) {
+            const error = exception instanceof Error ? exception : new Error(String(exception))
+
+            this.state = { status: "rejected", error }
+
+            throw error
+        } finally {
+            if (this.loading === loading) this.loading = undefined
+        }
     }
 
     private async readCatalog(): Promise<readonly ProgramRelease[]> {
@@ -119,7 +130,9 @@ export default class ProgramReleases {
 
             for (const repository of repositories) {
                 if (!repository.archived && !repository.fork && repository.name.endsWith("-program")) {
-                    identities.add(repository.name.slice(0, -"-program".length))
+                    const identity = repository.name.slice(0, -"-program".length)
+
+                    if (identity !== setupIdentity) identities.add(identity)
                 }
             }
 
@@ -196,8 +209,13 @@ export default class ProgramReleases {
     }
 }
 
+type CatalogState =
+    | Readonly<{ status: "fulfilled", catalog: readonly ProgramRelease[] }>
+    | Readonly<{ status: "rejected", error: Error }>
+
 const repositoryPageSize = 100
 const maximumRepositoryPages = 1_000
+const setupIdentity = "setup"
 
 const githubHeaders = {
     Accept: "application/vnd.github+json",

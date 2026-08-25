@@ -6,5 +6,6 @@ export const programReleaseRequest = z.object({
 
 export const programReleaseListRequest = z.object({
     page: z.number().int().min(1).max(1_000),
-    limit: z.number().int().min(1).max(50)
+    limit: z.number().int().min(1).max(50),
+    retry: z.boolean()
 }).strict()
