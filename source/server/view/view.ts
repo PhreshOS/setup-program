@@ -9,7 +9,7 @@ export default async function view() {
     const installer = new ProgramInstaller(
         releases,
         host.program,
-        snapshot => current.publish("program.installation", snapshot)
+        snapshot => current.client.publish("program.installation", snapshot)
     )
     const application = new Application(releases, installer)
 

@@ -50,6 +50,7 @@ button { font: inherit; }
     gap: calc(var(--unit) * 2);
     padding: clamp(calc(var(--unit) * 2), 4vw, calc(var(--unit) * 4));
     overflow: hidden;
+    transition: opacity 240ms ease-in;
 }
 
 .programs-header,
@@ -313,7 +314,10 @@ button { font: inherit; }
 
 .catalog-more { justify-self: start; }
 
-.programs[data-closing] { opacity: 0.64; }
+.programs[data-closing] {
+    pointer-events: none;
+    opacity: 0;
+}
 
 @media (max-width: 34rem) {
     .program-entry {
