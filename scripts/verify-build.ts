@@ -6,7 +6,8 @@ import manifest from "../package.json" with { type: "json" }
 assert.equal(config.identity, "setup")
 assert.equal(config.name, "Setup")
 assert.equal(config.version, manifest.version)
-assert.equal(config.server, undefined)
+assert.equal(config.server?.location, "dist/server")
+assert.equal(config.server?.startCommand, "node main.js")
 assert.equal(config.client?.location, "dist/client")
 assert.equal(config.client?.layer, "over")
 assert.deepEqual(config.client?.size, { width: "1/2", height: "1/2" })
@@ -17,6 +18,11 @@ const client = readdirSync("dist/client/assets").map(file => readFileSync(`dist/
 
 assert.match(page, /<html/i)
 assert.match(client, /windowLocalSurfaceSet/)
-assert.match(client, /Your space is ready/)
-assert.match(client, /prefers-reduced-motion/)
-assert.equal(existsSync("dist/server"), false)
+assert.match(client, /Programs/)
+assert.doesNotMatch(client, /Your space is ready/)
+assert.match(readFileSync("dist/server/main.js", "utf8"), /program\.releases/)
+assert.equal(existsSync("dist/server/main.js"), true)
+
+const serverManifest = JSON.parse(readFileSync("dist/server/package.json", "utf8")) as Record<string, unknown>
+
+assert.deepEqual(serverManifest, { type: "module" })

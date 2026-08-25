@@ -22,6 +22,9 @@
             ],
             "@client/*": [
                 "./source/client/*"
+            ],
+            "@libs/*": [
+                "./source/libs/*"
             ]
         }
     }

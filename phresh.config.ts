@@ -33,6 +33,17 @@ export default defineConfig({
     // `phresh dev` does not build and uses the declarations below instead.
     buildCommand: "vite-node scripts/build.ts",
 
+    // The Server owns access to official release metadata. The Client never
+    // talks to GitHub directly; it reaches this capability through its paired
+    // Server endpoint.
+    server: {
+        location: "dist/server",
+        startCommand: "node main.js",
+        development: {
+            startCommand: "vite-node source/server/main.ts"
+        }
+    },
+
     // The Client declaration also defines the initial Window created for it.
     // It contains presentation defaults only; live Window state belongs to
     // each running Process.
