@@ -120,7 +120,9 @@ function ProgramCatalog({ catalog, installation }: Readonly<{ catalog: Catalog, 
 
 function ProgramEntry({ release, installation }: Readonly<{ release: ProgramRelease, installation?: ProgramInstallation }>) {
     return <article className="program-entry">
-        <img className="program-icon" src={release.icon} alt="" loading="lazy" />
+        {release.icon
+            ? <img className="program-icon" src={release.icon} alt="" loading="lazy" />
+            : <span className="program-icon" aria-hidden="true" />}
 
         <div className="program-summary">
             <header>
@@ -139,14 +141,10 @@ function ProgramEntry({ release, installation }: Readonly<{ release: ProgramRele
         </div>
 
         <dl className="program-details">
-            <div>
+            {release.website && <div>
                 <dt>Website</dt>
                 <dd title={release.website}>{release.website}</dd>
-            </div>
-            <div>
-                <dt>Metadata</dt>
-                <dd>Schema {release.schema}</dd>
-            </div>
+            </div>}
             {installation && <div>
                 <dt>Installation</dt>
                 <dd className={`installation-${installation.status}`} title={installation.error ?? undefined}>

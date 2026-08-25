@@ -73,7 +73,6 @@ assert(publications.some(snapshot => snapshot.programs.some(program => program.s
 
 function release(identity: string): ProgramRelease {
     return {
-        schema: 1,
         identity,
         version: "1.0.0",
         name: identity,

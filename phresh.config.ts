@@ -28,6 +28,10 @@ export default defineConfig({
     // derives the standard hosted icon sizes from it.
     icon: "icon.png",
 
+    categories: ["System"],
+    keywords: ["setup", "programs", "installation"],
+    website: "https://github.com/PhreshOS/setup-program",
+
     // Prepares the production Client directory. The CLI runs it from this
     // project before `phresh start`, `phresh install`, and `phresh pack`.
     // `phresh dev` does not build and uses the declarations below instead.

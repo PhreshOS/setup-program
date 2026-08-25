@@ -19,9 +19,8 @@ const releases = new ProgramReleases(async function (input) {
         ])
     }
 
-    if (url.endsWith("/metadata.json")) {
+    if (url.endsWith("/program.json")) {
         return Response.json({
-            schema: 1,
             identity: "phresh",
             version: "0.1.12",
             name: "Phresh Program",
@@ -46,7 +45,6 @@ const releases = new ProgramReleases(async function (input) {
 assert.equal(requestCount, 0, "Constructing the catalog must not request GitHub")
 
 assert.deepEqual(await releases.latest("phresh"), {
-    schema: 1,
     identity: "phresh",
     version: "0.1.12",
     name: "Phresh Program",
@@ -63,7 +61,6 @@ assert.equal(requested, "https://api.github.com/repos/PhreshOS/phresh-program/re
 
 assert.deepEqual(await releases.list(1, 20), {
     releases: [{
-        schema: 1,
         identity: "phresh",
         version: "0.1.12",
         name: "Phresh Program",
@@ -112,7 +109,7 @@ function githubRelease(version: string, overrides: Record<string, unknown> = {})
         assets: [
             { name: `phresh@${version}.zip`, browser_download_url: `https://example.test/phresh@${version}.zip` },
             { name: `phresh@${version}.zip.sha256`, browser_download_url: `https://example.test/phresh@${version}.zip.sha256` },
-            { name: "metadata.json", browser_download_url: `https://example.test/${version}/metadata.json` },
+            { name: "program.json", browser_download_url: `https://example.test/${version}/program.json` },
             { name: "icon.png", browser_download_url: `https://example.test/${version}/icon.png` }
         ],
         ...overrides
