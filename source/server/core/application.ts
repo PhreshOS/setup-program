@@ -2,7 +2,13 @@ import ProgramReleases from "./program-releases"
 
 /** Owns Setup's application operations and authoritative external resources. */
 export default class Application {
-    public constructor(private readonly releases = new ProgramReleases()) {}
+    private constructor(private readonly releases: ProgramReleases) {}
+
+    public static async open(releases = new ProgramReleases()) {
+        await releases.load()
+
+        return new Application(releases)
+    }
 
     public programRelease(program: string) {
         return this.releases.latest(program)

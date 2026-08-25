@@ -3,8 +3,10 @@ import ProgramReleases from "../source/server/core/program-releases"
 
 let requested = ""
 let catalogRequested = ""
+let requestCount = 0
 
 const releases = new ProgramReleases(async function (input) {
+    requestCount++
     const url = String(input)
 
     if (url.includes("/orgs/PhreshOS/repos?")) {
@@ -40,7 +42,10 @@ const releases = new ProgramReleases(async function (input) {
     ])
 })
 
+await releases.load()
+
 assert.deepEqual(await releases.latest("phresh"), {
+    schema: 1,
     identity: "phresh",
     version: "0.1.12",
     name: "Phresh Program",
@@ -57,6 +62,7 @@ assert.equal(requested, "https://api.github.com/repos/PhreshOS/phresh-program/re
 
 assert.deepEqual(await releases.list(1, 20), {
     releases: [{
+        schema: 1,
         identity: "phresh",
         version: "0.1.12",
         name: "Phresh Program",
@@ -72,7 +78,15 @@ assert.deepEqual(await releases.list(1, 20), {
     nextPage: null
 })
 
-assert.equal(catalogRequested, "https://api.github.com/orgs/PhreshOS/repos?type=public&sort=full_name&per_page=20&page=1")
+assert.equal(catalogRequested, "https://api.github.com/orgs/PhreshOS/repos?type=public&sort=full_name&per_page=100&page=1")
+
+const loadedRequestCount = requestCount
+
+await releases.load()
+await releases.latest("phresh")
+await releases.list(1, 20)
+
+assert.equal(requestCount, loadedRequestCount, "The loaded catalog must not request GitHub again")
 
 function githubRelease(version: string, overrides: Record<string, unknown> = {}) {
     return {

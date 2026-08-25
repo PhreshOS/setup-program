@@ -3,7 +3,7 @@ import Application from "@server/core/application"
 import { programReleaseListRequest, programReleaseRequest } from "./contract"
 
 export default async function view() {
-    const application = new Application()
+    const application = await Application.open()
 
     current.answer("program.release", async function ({ payload }) {
         const request = programReleaseRequest.parse(payload)

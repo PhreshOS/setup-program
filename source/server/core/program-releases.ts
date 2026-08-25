@@ -35,6 +35,7 @@ const programMetadata = z.object({
 }).passthrough()
 
 export type ProgramRelease = Readonly<{
+    schema: 1
     identity: string
     version: string
     name: string
@@ -66,19 +67,77 @@ type Fetcher = (input: string | URL | Request, init?: RequestInit) => Promise<Re
 
 /** Resolves complete stable official Program releases from GitHub. */
 export default class ProgramReleases {
+    private catalog: readonly ProgramRelease[] | undefined
+    private loading: Promise<readonly ProgramRelease[]> | undefined
+
     public constructor(private readonly fetcher: Fetcher = fetch) {}
 
-    public async latest(identity: string): Promise<ProgramRelease> {
-        const selected = await this.resolve(identity)
+    /** Loads the complete authoritative catalog exactly once for this Server run. */
+    public async load(): Promise<void> {
+        if (this.catalog) return
+
+        const loading = this.loading ??= this.readCatalog()
+
+        try {
+            this.catalog = await loading
+        } finally {
+            if (!this.catalog) this.loading = undefined
+        }
+    }
+
+    public latest(identity: string): ProgramRelease {
+        const selected = this.loaded().find(release => release.identity === identity)
 
         if (!selected) throw new Error(`No stable ${identity} Program release is available`)
 
         return selected
     }
 
-    public async list(page: number, limit: number): Promise<ProgramReleasePage> {
+    public list(page: number, limit: number): ProgramReleasePage {
+        const catalog = this.loaded()
+        const start = (page - 1) * limit
+        const releases = catalog.slice(start, start + limit)
+
+        return Object.freeze({
+            releases: Object.freeze(releases),
+            page,
+            nextPage: start + limit < catalog.length ? page + 1 : null
+        })
+    }
+
+    private loaded() {
+        if (!this.catalog) throw new Error("The Program catalog has not been loaded")
+
+        return this.catalog
+    }
+
+    private async readCatalog(): Promise<readonly ProgramRelease[]> {
+        const identities = new Set<string>()
+
+        for (let page = 1; page <= maximumRepositoryPages; page++) {
+            const repositories = await this.readRepositories(page)
+
+            for (const repository of repositories) {
+                if (!repository.archived && !repository.fork && repository.name.endsWith("-program")) {
+                    identities.add(repository.name.slice(0, -"-program".length))
+                }
+            }
+
+            if (repositories.length < repositoryPageSize) {
+                const releases = (await Promise.all([...identities].map(identity => this.resolve(identity))))
+                    .filter((value): value is ProgramRelease => value !== null)
+                    .sort((left, right) => left.identity.localeCompare(right.identity))
+
+                return Object.freeze(releases)
+            }
+        }
+
+        throw new Error("The official Program catalog exceeds the safe repository limit")
+    }
+
+    private async readRepositories(page: number) {
         const response = await this.fetcher(
-            `https://api.github.com/orgs/PhreshOS/repos?type=public&sort=full_name&per_page=${limit}&page=${page}`,
+            `https://api.github.com/orgs/PhreshOS/repos?type=public&sort=full_name&per_page=${repositoryPageSize}&page=${page}`,
             { headers: githubHeaders }
         )
 
@@ -86,20 +145,7 @@ export default class ProgramReleases {
             throw new Error(`The official Program catalog could not be read (${response.status} ${response.statusText})`)
         }
 
-        const repositories = repositoryList.parse(await response.json())
-        const identities = repositories
-            .filter(value => !value.archived && !value.fork && value.name.endsWith("-program"))
-            .map(value => value.name.slice(0, -"-program".length))
-
-        const releases = (await Promise.all(identities.map(identity => this.resolve(identity))))
-            .filter((value): value is ProgramRelease => value !== null)
-            .sort((left, right) => left.identity.localeCompare(right.identity))
-
-        return Object.freeze({
-            releases: Object.freeze(releases),
-            page,
-            nextPage: repositories.length === limit ? page + 1 : null
-        })
+        return repositoryList.parse(await response.json())
     }
 
     private async resolve(identity: string): Promise<ProgramRelease | null> {
@@ -135,6 +181,7 @@ export default class ProgramReleases {
         }
 
         return Object.freeze({
+            schema: metadata.schema,
             identity: candidate.identity,
             version: candidate.version,
             name: metadata.name,
@@ -148,6 +195,9 @@ export default class ProgramReleases {
         })
     }
 }
+
+const repositoryPageSize = 100
+const maximumRepositoryPages = 1_000
 
 const githubHeaders = {
     Accept: "application/vnd.github+json",

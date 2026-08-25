@@ -58,7 +58,7 @@ function ProgramCatalog({ catalog }: Readonly<{ catalog: Catalog }>) {
         </p>}
 
         {catalog.releases.length > 0 && <div className="program-grid">
-            {catalog.releases.map(release => <ProgramCard key={release.identity} release={release} />)}
+            {catalog.releases.map(release => <ProgramEntry key={release.identity} release={release} />)}
         </div>}
 
         {catalog.continuationException !== undefined && <p className="catalog-more-error" role="alert">
@@ -76,23 +76,44 @@ function ProgramCatalog({ catalog }: Readonly<{ catalog: Catalog }>) {
     </section>
 }
 
-function ProgramCard({ release }: Readonly<{ release: ProgramRelease }>) {
-    return <article className="program-card">
+function ProgramEntry({ release }: Readonly<{ release: ProgramRelease }>) {
+    return <article className="program-entry">
         <img className="program-icon" src={release.icon} alt="" loading="lazy" />
 
-        <div className="program-information">
-            <div className="program-card-heading">
+        <div className="program-summary">
+            <header>
                 <strong>{release.name}</strong>
                 <span>v{release.version}</span>
-            </div>
+            </header>
+
+            <span className="program-identity">{release.identity}</span>
 
             <p>{release.description}</p>
 
-            <div className="program-categories">
-                {release.categories.map(category => <span key={category}>{category}</span>)}
+            <div className="program-classification">
+                <ProgramValues label="Categories" values={release.categories} />
+                <ProgramValues label="Keywords" values={release.keywords} />
             </div>
         </div>
+
+        <dl className="program-details">
+            <div>
+                <dt>Website</dt>
+                <dd title={release.website}>{release.website}</dd>
+            </div>
+            <div>
+                <dt>Metadata</dt>
+                <dd>Schema {release.schema}</dd>
+            </div>
+        </dl>
     </article>
+}
+
+function ProgramValues({ label, values }: Readonly<{ label: string, values: readonly string[] }>) {
+    return <div className="program-values">
+        <span>{label}</span>
+        <p>{values.join(" · ") || "—"}</p>
+    </div>
 }
 
 function message(value: unknown) {
