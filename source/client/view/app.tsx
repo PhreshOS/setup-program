@@ -78,8 +78,20 @@ function ProgramCatalog({ catalog }: Readonly<{ catalog: Catalog }>) {
 
 function ProgramCard({ release }: Readonly<{ release: ProgramRelease }>) {
     return <article className="program-card">
-        <div className="program-identity">{release.identity}</div>
-        <div className="program-version">v{release.version}</div>
+        <img className="program-icon" src={release.icon} alt="" loading="lazy" />
+
+        <div className="program-information">
+            <div className="program-card-heading">
+                <strong>{release.name}</strong>
+                <span>v{release.version}</span>
+            </div>
+
+            <p>{release.description}</p>
+
+            <div className="program-categories">
+                {release.categories.map(category => <span key={category}>{category}</span>)}
+            </div>
+        </div>
     </article>
 }
 

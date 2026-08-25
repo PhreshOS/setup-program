@@ -1,7 +1,7 @@
 {
     "name": "setup-program",
     "private": true,
-    "version": "0.1.14",
+    "version": "0.1.15",
     "description": "The official PhreshOS welcome and initial setup Program.",
     "type": "module",
     "packageManager": "bun@1.3.14",
@@ -11,7 +11,7 @@
         "dev": "phresh dev",
         "start": "phresh start",
         "pack": "phresh pack",
-        "verify": "node --run check && node --run build && vite-node scripts/verify-program-releases.ts && vite-node scripts/verify-build.ts"
+        "verify": "node --run check && node --run build && vite-node scripts/verify-metadata.ts && vite-node scripts/verify-program-releases.ts && vite-node scripts/verify-build.ts"
     },
     "author": "Zohayr SLILEH",
     "license": "MIT",

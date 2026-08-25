@@ -1,0 +1,11 @@
+{
+    "schema": 1,
+    "identity": "setup",
+    "version": "0.1.15",
+    "name": "Setup",
+    "description": "Discover and prepare official Programs for a new PhreshOS environment.",
+    "icon": "icon.png",
+    "categories": ["System"],
+    "keywords": ["setup", "programs", "installation"],
+    "website": "https://github.com/PhreshOS/setup-program"
+}

@@ -22,9 +22,36 @@ const repositoryList = z.array(z.object({
     fork: z.boolean()
 }).passthrough())
 
+const programMetadata = z.object({
+    schema: z.literal(1),
+    identity: z.string().trim().min(1).max(100).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+    version: z.string().regex(stableVersion),
+    name: z.string().trim().min(1).max(100),
+    description: z.string().trim().min(1).max(500),
+    icon: z.literal("icon.png"),
+    categories: z.array(z.string().trim().min(1).max(50)).max(20),
+    keywords: z.array(z.string().trim().min(1).max(50)).max(50),
+    website: z.string().url()
+}).passthrough()
+
 export type ProgramRelease = Readonly<{
     identity: string
     version: string
+    name: string
+    description: string
+    icon: string
+    categories: readonly string[]
+    keywords: readonly string[]
+    website: string
+    archive: string
+    checksum: string
+}>
+
+type ProgramReleaseCandidate = Readonly<{
+    identity: string
+    version: string
+    metadata: string
+    icon: string
     archive: string
     checksum: string
 }>
@@ -91,7 +118,34 @@ export default class ProgramReleases {
 
         const selected = candidates[0]
 
-        return selected ?? null
+        return selected ? await this.describe(selected) : null
+    }
+
+    private async describe(candidate: ProgramReleaseCandidate): Promise<ProgramRelease> {
+        const response = await this.fetcher(candidate.metadata, { headers: githubHeaders })
+
+        if (!response.ok) {
+            throw new Error(`The ${candidate.identity} Program metadata could not be read (${response.status} ${response.statusText})`)
+        }
+
+        const metadata = programMetadata.parse(await response.json())
+
+        if (metadata.identity !== candidate.identity || metadata.version !== candidate.version) {
+            throw new Error(`The ${candidate.identity} Program metadata does not match its release`)
+        }
+
+        return Object.freeze({
+            identity: candidate.identity,
+            version: candidate.version,
+            name: metadata.name,
+            description: metadata.description,
+            icon: candidate.icon,
+            categories: Object.freeze([...metadata.categories]),
+            keywords: Object.freeze([...metadata.keywords]),
+            website: metadata.website,
+            archive: candidate.archive,
+            checksum: candidate.checksum
+        })
     }
 }
 
@@ -101,7 +155,7 @@ const githubHeaders = {
     "X-GitHub-Api-Version": "2022-11-28"
 } as const
 
-function candidate(identity: string, value: z.infer<typeof release>): ProgramRelease[] {
+function candidate(identity: string, value: z.infer<typeof release>): ProgramReleaseCandidate[] {
     if (value.draft || value.prerelease) return []
 
     const prefix = `${identity}@`
@@ -114,12 +168,16 @@ function candidate(identity: string, value: z.infer<typeof release>): ProgramRel
     if (!stableVersion.test(version) || value.tag_name !== `v${version}`) return []
 
     const checksum = value.assets.find(item => item.name === `${archive.name}.sha256`)
+    const metadata = value.assets.find(item => item.name === "metadata.json")
+    const icon = value.assets.find(item => item.name === "icon.png")
 
-    if (!checksum) return []
+    if (!checksum || !metadata || !icon) return []
 
     return [{
         identity,
         version,
+        metadata: metadata.browser_download_url,
+        icon: icon.browser_download_url,
         archive: archive.browser_download_url,
         checksum: checksum.browser_download_url
     }]

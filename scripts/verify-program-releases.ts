@@ -16,6 +16,20 @@ const releases = new ProgramReleases(async function (input) {
         ])
     }
 
+    if (url.endsWith("/metadata.json")) {
+        return Response.json({
+            schema: 1,
+            identity: "phresh",
+            version: "0.1.12",
+            name: "Phresh Program",
+            description: "A Program for testing PhreshOS.",
+            icon: "icon.png",
+            categories: ["Development"],
+            keywords: ["example"],
+            website: "https://example.test/phresh"
+        })
+    }
+
     requested = url
 
     return Response.json([
@@ -29,6 +43,12 @@ const releases = new ProgramReleases(async function (input) {
 assert.deepEqual(await releases.latest("phresh"), {
     identity: "phresh",
     version: "0.1.12",
+    name: "Phresh Program",
+    description: "A Program for testing PhreshOS.",
+    icon: "https://example.test/0.1.12/icon.png",
+    categories: ["Development"],
+    keywords: ["example"],
+    website: "https://example.test/phresh",
     archive: "https://example.test/phresh@0.1.12.zip",
     checksum: "https://example.test/phresh@0.1.12.zip.sha256"
 })
@@ -39,6 +59,12 @@ assert.deepEqual(await releases.list(1, 20), {
     releases: [{
         identity: "phresh",
         version: "0.1.12",
+        name: "Phresh Program",
+        description: "A Program for testing PhreshOS.",
+        icon: "https://example.test/0.1.12/icon.png",
+        categories: ["Development"],
+        keywords: ["example"],
+        website: "https://example.test/phresh",
         archive: "https://example.test/phresh@0.1.12.zip",
         checksum: "https://example.test/phresh@0.1.12.zip.sha256"
     }],
@@ -55,7 +81,9 @@ function githubRelease(version: string, overrides: Record<string, unknown> = {})
         tag_name: `v${version}`,
         assets: [
             { name: `phresh@${version}.zip`, browser_download_url: `https://example.test/phresh@${version}.zip` },
-            { name: `phresh@${version}.zip.sha256`, browser_download_url: `https://example.test/phresh@${version}.zip.sha256` }
+            { name: `phresh@${version}.zip.sha256`, browser_download_url: `https://example.test/phresh@${version}.zip.sha256` },
+            { name: "metadata.json", browser_download_url: `https://example.test/${version}/metadata.json` },
+            { name: "icon.png", browser_download_url: `https://example.test/${version}/icon.png` }
         ],
         ...overrides
     }
