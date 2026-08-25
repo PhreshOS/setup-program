@@ -95,7 +95,10 @@ export default class ProgramInstaller {
 
             try {
                 this.update(release.identity, "installing")
-                await program.install()
+                for await (const _chunk of program.install()) {
+                    // Setup represents installation state; command output is
+                    // consumed here so the authoritative operation can flow.
+                }
                 this.update(release.identity, "installed")
             } catch (exception) {
                 await program.forget().catch(() => undefined)

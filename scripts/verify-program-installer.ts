@@ -22,10 +22,10 @@ const programs = {
         const identity = path.split("/").at(-2)!
 
         return {
-            async install() {
+            async *install() {
                 if (identity === "broken") throw new Error("Installation failed")
+                yield { stream: "stdout", text: `Installing ${identity}\n` } as const
                 installed.push(identity)
-                return this
             },
             async forget() {}
         } as unknown as Program
