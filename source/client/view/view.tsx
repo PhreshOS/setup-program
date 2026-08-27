@@ -1,4 +1,4 @@
-import { HostProvider, useHostTheme } from "@phreshos/react"
+import { SystemProvider, useSystemTheme } from "@phreshos/react"
 import Application from "@client/core/application"
 import usePromise from "@libs/react-promise"
 import type { InstallationSnapshot } from "@server/core/program-installer"
@@ -8,13 +8,13 @@ import App from "./app"
 import "./style.css"
 
 export default function View() {
-    return <HostProvider provide={["theme"]} fallback={<ResourceState message="Preparing Setup…" />}>
+    return <SystemProvider provide={["theme"]} fallback={<ResourceState message="Preparing Setup…" />}>
         <Setup />
-    </HostProvider>
+    </SystemProvider>
 }
 
 function Setup() {
-    const theme = useHostTheme()
+    const theme = useSystemTheme()
     const application = useMemo(() => new Application(), [])
     const preparation = usePromise(() => application.prepare(), [application])
     const catalog = useCatalog(application)

@@ -1,4 +1,4 @@
-import type { HostProgram } from "@phreshos/server"
+import type { SystemProgram } from "@phreshos/server"
 import ProgramPackage, { type PreparedProgramPackage } from "./program-package"
 import type { ProgramRelease } from "./program-releases"
 
@@ -36,7 +36,7 @@ export default class ProgramInstaller {
 
     public constructor(
         private readonly releases: ProgramCatalog,
-        private readonly programs: HostProgram,
+        private readonly programs: SystemProgram,
         private readonly publish: Publisher,
         private readonly prepare: PackagePreparer = (release, verifying) => new ProgramPackage(release).prepare(verifying)
     ) {}

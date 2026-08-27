@@ -1,4 +1,4 @@
-import { current, host } from "@phreshos/server"
+import { current, system } from "@phreshos/server"
 import Application from "@server/core/application"
 import ProgramInstaller from "@server/core/program-installer"
 import ProgramReleases from "@server/core/program-releases"
@@ -8,7 +8,7 @@ export default async function view() {
     const releases = new ProgramReleases()
     const installer = new ProgramInstaller(
         releases,
-        host.program,
+        system.program,
         snapshot => current.client.publish("program.installation", snapshot)
     )
     const application = new Application(releases, installer)
