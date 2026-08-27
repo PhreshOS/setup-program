@@ -1,10 +1,9 @@
-import type { ThemeProperties } from "@phreshos/core"
 import usePromise from "@libs/react-promise"
 import type { InstallationSnapshot, ProgramInstallation } from "@server/core/program-installer"
 import type { ProgramRelease } from "@server/core/program-releases"
 import type { CSSProperties } from "react"
 
-export default function App({ theme, close, catalog, installation }: Properties) {
+export default function App({ appearance, close, catalog, installation }: Properties) {
     const closing = usePromise(close)
     const installing = installation.snapshot?.status === "running"
 
@@ -12,9 +11,9 @@ export default function App({ theme, close, catalog, installation }: Properties)
         className="programs"
         data-closing={closing.isPending || undefined}
         style={{
-            "--theme-background": theme.background,
-            "--theme-foreground": theme.foreground,
-            "--theme-accent": theme.accent
+            "--theme-background": appearance.background,
+            "--theme-foreground": appearance.foreground,
+            "--theme-accent": appearance.accent
         } as CSSProperties}
     >
         <header className="programs-header">
@@ -194,7 +193,7 @@ function terminal(status: ProgramInstallation["status"]) {
 }
 
 type Properties = Readonly<{
-    theme: Readonly<ThemeProperties>
+    appearance: Readonly<{ background: string, foreground: string, accent: string }>
     close: () => Promise<void>
     catalog: Catalog
     installation: Installation

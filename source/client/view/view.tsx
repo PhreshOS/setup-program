@@ -1,4 +1,5 @@
-import { SystemProvider, useSystemTheme } from "@phreshos/react"
+import { SystemProvider, useSystemAppearance, useSystemTheme } from "@phreshos/react"
+import { AppearanceProvider, useResolveTheme } from "@phreshos/react-ui"
 import Application from "@client/core/application"
 import usePromise from "@libs/react-promise"
 import type { InstallationSnapshot } from "@server/core/program-installer"
@@ -8,13 +9,27 @@ import App from "./app"
 import "./style.css"
 
 export default function View() {
-    return <SystemProvider provide={["theme"]} fallback={<ResourceState message="Preparing Setup…" />}>
+    return <SystemProvider provide={["appearance", "theme"]} fallback={<ResourceState message="Preparing Setup…" />}>
         <Setup />
     </SystemProvider>
 }
 
 function Setup() {
+    const appearance = useSystemAppearance()
     const theme = useSystemTheme()
+
+    return <AppearanceProvider appearance={appearance} theme={theme}>
+        <ResolvedSetup />
+    </AppearanceProvider>
+}
+
+function ResolvedSetup() {
+    const appearance = useSystemAppearance()
+    const colors = {
+        background: useResolveTheme(appearance.background),
+        foreground: useResolveTheme(appearance.foreground),
+        accent: useResolveTheme(appearance.accent)
+    }
     const application = useMemo(() => new Application(), [])
     const preparation = usePromise(() => application.prepare(), [application])
     const catalog = useCatalog(application)
@@ -27,7 +42,7 @@ function Setup() {
         retry={() => void preparation.safeExecute()}
     />
 
-    return <App theme={theme} close={() => application.close()} catalog={catalog} installation={installation} />
+    return <App appearance={colors} close={() => application.close()} catalog={catalog} installation={installation} />
 }
 
 function useCatalog(application: Application) {
