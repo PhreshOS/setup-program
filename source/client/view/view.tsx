@@ -1,31 +1,22 @@
-import { SystemProvider, useSystemAppearance, useSystemTheme } from "@phreshos/react"
+import { SystemProvider, useDesktopPreferences, useSystemAppearance } from "@phreshos/react"
 import { AppearanceProvider, useResolveTheme } from "@phreshos/react-ui"
 import Application from "@client/core/application"
 import usePromise from "@libs/react-promise"
 import type { InstallationSnapshot } from "@server/core/program-installer"
 import type { ProgramReleasePage } from "@server/core/program-releases"
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import App from "./app"
 import "./style.css"
 
 export default function View() {
-    return <SystemProvider provide={["appearance", "theme"]} fallback={<ResourceState message="Preparing Setup…" />}>
+    return <SystemProvider provide={["appearance", "desktopPreferences"]} fallback={<ResourceState message="Preparing Setup…" />}>
         <Setup />
     </SystemProvider>
 }
 
 function Setup() {
     const appearance = useSystemAppearance()
-    const theme = useSystemTheme()
-
-    useLayoutEffect(() => {
-        const root = document.documentElement
-        const previous = root.style.colorScheme
-
-        root.style.colorScheme = theme
-
-        return () => { root.style.colorScheme = previous }
-    }, [theme])
+    const { theme } = useDesktopPreferences()
 
     return <AppearanceProvider appearance={appearance} theme={theme}>
         <ResolvedSetup />
