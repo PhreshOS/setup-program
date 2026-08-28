@@ -1,5 +1,4 @@
 import assert from "node:assert/strict"
-import type { SystemProgram, Program } from "@phreshos/server"
 import ProgramInstaller, { type InstallationSnapshot } from "../source/server/core/program-installer"
 import type { PreparedProgramPackage } from "../source/server/core/program-package"
 import type { ProgramRelease } from "../source/server/core/program-releases"
@@ -16,7 +15,7 @@ const programs = {
     async find(identity: string) {
         if (identity !== "existing") return null
 
-        return { installed: async () => true } as Program
+        return { installed: async () => true }
     },
     async create(path: string) {
         const identity = path.split("/").at(-2)!
@@ -28,9 +27,9 @@ const programs = {
                 installed.push(identity)
             },
             async forget() {}
-        } as unknown as Program
+        }
     }
-} as SystemProgram
+}
 
 const installer = new ProgramInstaller(
     { all: async () => releases },
