@@ -4,7 +4,7 @@ import Application from "@client/core/application"
 import usePromise from "@libs/react-promise"
 import type { InstallationSnapshot } from "@server/core/program-installer"
 import type { ProgramReleasePage } from "@server/core/program-releases"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 import App from "./app"
 import "./style.css"
 
@@ -17,6 +17,15 @@ export default function View() {
 function Setup() {
     const appearance = useSystemAppearance()
     const theme = useSystemTheme()
+
+    useLayoutEffect(() => {
+        const root = document.documentElement
+        const previous = root.style.colorScheme
+
+        root.style.colorScheme = theme
+
+        return () => { root.style.colorScheme = previous }
+    }, [theme])
 
     return <AppearanceProvider appearance={appearance} theme={theme}>
         <ResolvedSetup />
