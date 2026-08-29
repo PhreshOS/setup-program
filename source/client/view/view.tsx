@@ -1,5 +1,5 @@
 import { SystemProvider, useDesktopPreferences, useSystemAppearance } from "@phreshos/react"
-import { AppearanceProvider, useDocumentColorScheme, useResolveTheme } from "@phreshos/react-ui"
+import { AppearanceProvider, useResolveTheme } from "@phreshos/react-ui"
 import Application from "@client/core/application"
 import usePromise from "@libs/react-promise"
 import type { InstallationSnapshot } from "@server/core/program-installer"
@@ -17,7 +17,6 @@ export default function View() {
 function Setup() {
     const appearance = useSystemAppearance()
     const { theme } = useDesktopPreferences()
-    useDocumentColorScheme(theme)
 
     return <AppearanceProvider appearance={appearance} theme={theme}>
         <ResolvedSetup />
