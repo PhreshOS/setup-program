@@ -196,7 +196,6 @@ button { font: inherit; }
     grid-template-columns: minmax(0, 1fr);
     align-content: start;
     overflow-y: auto;
-    scrollbar-width: thin;
 }
 
 .program-entry {
