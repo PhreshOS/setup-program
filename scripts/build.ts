@@ -1,10 +1,7 @@
 import { rm, writeFile } from "node:fs/promises"
-
-process.env.NODE_ENV = "production"
+import { build } from "vite"
 
 await rm("dist", { recursive: true, force: true })
-
-const { build } = await import("vite")
 
 await build({ configFile: "vite.config.ts", ssr: { noExternal: true } })
 
