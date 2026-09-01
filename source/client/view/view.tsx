@@ -1,4 +1,5 @@
 import { SystemProvider, useDesktopPreferences, useSystemAppearance } from "@phreshos/react"
+import { system } from "@phreshos/client"
 import { AppearanceProvider, useResolveTheme } from "@phreshos/react-ui"
 import Application from "@client/core/application"
 import usePromise from "@libs/react-promise"
@@ -9,7 +10,11 @@ import App from "./app"
 import "./style.css"
 
 export default function View() {
-    return <SystemProvider provide={["appearance", "desktopPreferences"]} fallback={<ResourceState message="Preparing Setup…" />}>
+    return <SystemProvider
+        appearance={system.appearance}
+        desktopPreferences={system.desktop.preferences}
+        fallback={<ResourceState message="Preparing Setup…" />}
+    >
         <Setup />
     </SystemProvider>
 }
