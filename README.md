@@ -1,30 +1,59 @@
 # Setup
 
-The initial PhreshOS welcome Program.
+The official PhreshOS welcome and initial setup Program.
 
-Setup has paired Client and Server endpoints. Server Core owns official Program
-release discovery and resolves the newest complete stable release from the
-corresponding `PhreshOS/<identity>-program` repository. A complete discoverable
-release contains a generated `program.json`, the Program archive and its
-checksum, plus `icon.png` when the Program declares one. Setup reads only the
-lightweight declaration and icon before installation. Its Server also owns the
-Program's default startup launch; generic installation only starts Setup once.
-Client Core exposes that operation locally without making View understand GitHub
-or endpoint traffic. The Client View presents the discovered releases as a
-paginated official Program catalog with explicit loading and failure states.
+Setup discovers official Program releases and presents the catalog used to
+prepare a new System.
 
-```bash
-bun install
-phresh dev
+## Model
+
+The Server owns release discovery, package verification, installation, and the
+Program's default startup launch. The Client renders the catalog and invokes
+those capabilities without understanding GitHub, archives, checksums, or
+Endpoint Traffic.
+
+A discoverable Program release contains its generated declaration, archive,
+checksum, and declared icon. Setup reads the declaration and icon before the
+owner chooses installation.
+
+Setup runs as a frameless desktop Program. Its local representation remains View
+state; Program discovery and installation remain authoritative Server work.
+
+## Installation
+
+```sh
+phresh install setup --run
 ```
 
-For the production shape, build and attach the Program with:
+## Development
 
-```bash
-phresh start
+```sh
+bun install --frozen-lockfile
+bun run verify
+bun run dev
 ```
 
-The Program declaration lives in `phresh.config.ts`.
+Build, attach the production definition, or package a release with:
 
-Setup is frameless, so its local Surface uses the shared Theme radius,
-matching the outer radius of standard Windows.
+```sh
+bun run build
+bun run start
+bun run pack
+```
+
+`verify` checks release discovery, installation, both Endpoints, and the
+production Program artifact.
+
+## Repository boundary
+
+This repository owns the first-run catalog and official Program installation
+workflow. Generic Program installation, System service setup, and release
+publication remain owned by the CLI, System, and individual Program
+repositories.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the repository workflow and
+[SECURITY.md](SECURITY.md) for private vulnerability reporting.
+
+## License
+
+Licensed under the [MIT License](LICENSE). Copyright © 2026 Zohayr SLILEH.
