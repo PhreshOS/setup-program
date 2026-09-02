@@ -79,10 +79,8 @@ export default defineConfig({
 
         development: {
 
-            // The development URL identifies the local Client server. Phresh
-            // starts the optional tool, waits for the Program asset path to
-            // respond, and routes that path to this server.
-            url: "http://localhost:5200/",
+            // The Project assigns an available local port, starts this command,
+            // and routes the Program asset path to the resulting server.
             startCommand: "vite --config vite.client.ts"
         }
     }
