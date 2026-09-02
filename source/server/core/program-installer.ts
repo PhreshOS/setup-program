@@ -1,4 +1,4 @@
-import type { SystemProgramEntity } from "@phreshos/server"
+import type { Program } from "@phreshos/server"
 import ProgramPackage, { type PreparedProgramPackage } from "./program-package"
 import type { ProgramRelease } from "./program-releases"
 
@@ -28,8 +28,8 @@ export type InstallationSnapshot = Readonly<{
 
 type ProgramCatalog = Readonly<{ all: () => Promise<readonly ProgramRelease[]> }>
 type ProgramRegistry = Readonly<{
-    find: (identity: string) => Promise<Pick<SystemProgramEntity, "installed"> | null>
-    create: (source: string) => Promise<Pick<SystemProgramEntity, "install" | "forget">>
+    find: (identity: string) => Promise<Pick<Program, "installed"> | null>
+    create: (source: string) => Promise<Pick<Program, "install" | "forget">>
 }>
 type PackagePreparer = (release: ProgramRelease, verifying: () => void) => Promise<PreparedProgramPackage>
 type Publisher = (snapshot: InstallationSnapshot) => void
