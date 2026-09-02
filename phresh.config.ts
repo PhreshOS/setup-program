@@ -79,11 +79,9 @@ export default defineConfig({
 
         development: {
 
-            // Development Clients are addressed by URL rather than a local
-            // artifact directory. The CLI starts this optional tool, waits for
-            // the URL to respond, and only then launches the Program. The dev
-            // server must allow the desktop origin through CORS; this project's
-            // Vite configuration does so.
+            // The development URL identifies the local Client server. Phresh
+            // starts the optional tool, waits for the Program asset path to
+            // respond, and routes that path to this server.
             url: "http://localhost:5200/",
             startCommand: "vite --config vite.client.ts"
         }
