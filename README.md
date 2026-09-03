@@ -1,29 +1,30 @@
 # Setup
 
-The official PhreshOS welcome and initial setup Program.
+The PhreshOS welcome and initial setup Program.
 
-Setup discovers official Program releases and presents the catalog used to
-prepare a new System.
+[Installation](https://docs.phreshos.com/installation) ·
+[Programs](https://docs.phreshos.com/runtime/programs) ·
+[Source](https://github.com/PhreshOS/setup-program)
 
-## Model
+## Role
 
-The Server owns release discovery, package verification, installation, and the
-Program's default startup launch. The Client renders the catalog and invokes
-those capabilities without understanding GitHub, archives, checksums, or
-Endpoint Traffic.
+Setup discovers verified official Program releases and presents the catalog
+used to prepare a new System. Its Server owns release discovery, verification,
+installation, and the Program's default startup launch; its Client renders the
+catalog and invokes those capabilities.
 
-A discoverable Program release contains its generated declaration, archive,
-checksum, and declared icon. Setup reads the declaration and icon before the
-owner chooses installation.
-
-Setup runs as a frameless desktop Program. Its local representation remains View
-state; Program discovery and installation remain authoritative Server work.
+The Program owns only the first-run catalog workflow. Generic Program
+installation, System service setup, and release publication remain with the
+System, CLI, and individual Program repositories.
 
 ## Installation
 
 ```sh
 phresh install setup --run
 ```
+
+See [Installation](https://docs.phreshos.com/installation) for the surrounding
+System setup workflow.
 
 ## Development
 
@@ -33,7 +34,7 @@ bun run verify
 bun run dev
 ```
 
-Build, attach the production definition, or package a release with:
+Build, run the production definition, or package a release with:
 
 ```sh
 bun run build
@@ -44,12 +45,18 @@ bun run pack
 `verify` checks release discovery, installation, both Endpoints, and the
 production Program artifact.
 
-## Repository boundary
+## Related repositories
 
-This repository owns the first-run catalog and official Program installation
-workflow. Generic Program installation, System service setup, and release
-publication remain owned by the CLI, System, and individual Program
-repositories.
+- [PhreshOS System](https://github.com/PhreshOS/system) owns Program state and
+  executes the setup workflow.
+- [`@phreshos/cli`](https://github.com/PhreshOS/cli) owns generic Program and
+  System installation commands.
+- [PhreshOS Install](https://github.com/PhreshOS/install) bootstraps the CLI and
+  System before this Program runs.
+- [Phresh Program](https://github.com/PhreshOS/phresh-program) is the starter
+  offered after setup.
+
+## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the repository workflow and
 [SECURITY.md](SECURITY.md) for private vulnerability reporting.
