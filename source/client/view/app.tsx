@@ -13,7 +13,7 @@ export default function App({ appearance, close, catalog, installation }: Proper
         style={{
             "--theme-background": appearance.background,
             "--theme-foreground": appearance.foreground,
-            "--theme-accent": appearance.accent
+            "--theme-primary": appearance.primary
         } as CSSProperties}
     >
         <header className="programs-header">
@@ -193,7 +193,7 @@ function terminal(status: ProgramInstallation["status"]) {
 }
 
 type Properties = Readonly<{
-    appearance: Readonly<{ background: string, foreground: string, accent: string }>
+    appearance: Readonly<{ background: string, foreground: string, primary: string }>
     close: () => Promise<void>
     catalog: Catalog
     installation: Installation

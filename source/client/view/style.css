@@ -2,7 +2,7 @@
     --unit: 0.5rem;
     --theme-background: #edf8fc;
     --theme-foreground: #183447;
-    --theme-accent: #4c9cff;
+    --theme-primary: #4c9cff;
     color: var(--theme-foreground);
     background: transparent;
     font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -89,10 +89,10 @@ button { font: inherit; }
 .catalog-more {
     min-height: calc(var(--unit) * 4);
     padding: var(--unit) calc(var(--unit) * 1.5);
-    border: 1px solid color-mix(in oklch, var(--theme-accent) 30%, transparent);
+    border: 1px solid color-mix(in oklch, var(--theme-primary) 30%, transparent);
     border-radius: var(--unit);
     color: var(--theme-foreground);
-    background: color-mix(in oklch, var(--theme-accent) 10%, transparent);
+    background: color-mix(in oklch, var(--theme-primary) 10%, transparent);
     font-size: 0.75rem;
     font-weight: 650;
     cursor: pointer;
@@ -106,8 +106,8 @@ button { font: inherit; }
 }
 
 .install-programs {
-    color: color-mix(in oklch, var(--theme-accent) 72%, var(--theme-foreground));
-    background: color-mix(in oklch, var(--theme-accent) 18%, transparent);
+    color: color-mix(in oklch, var(--theme-primary) 72%, var(--theme-foreground));
+    background: color-mix(in oklch, var(--theme-primary) 18%, transparent);
 }
 
 .operation-error,
@@ -133,7 +133,7 @@ button { font: inherit; }
     border: 0;
     border-radius: 999px;
     overflow: hidden;
-    accent-color: var(--theme-accent);
+    accent-color: var(--theme-primary);
 }
 
 .installation-progress strong {
@@ -170,8 +170,8 @@ button { font: inherit; }
     min-width: calc(var(--unit) * 3.5);
     padding: calc(var(--unit) / 2) var(--unit);
     border-radius: 999px;
-    color: var(--theme-accent);
-    background: color-mix(in oklch, var(--theme-accent) 12%, transparent);
+    color: var(--theme-primary);
+    background: color-mix(in oklch, var(--theme-primary) 12%, transparent);
     font-size: 0.75rem;
     font-weight: 700;
     text-align: center;

@@ -31,7 +31,7 @@ function ResolvedSetup() {
     const colors = {
         background: useResolveTheme(appearance.background),
         foreground: useResolveTheme(appearance.foreground),
-        accent: useResolveTheme(appearance.accent)
+        primary: useResolveTheme(appearance.primary)
     }
     const application = useMemo(() => new Application(), [])
     const preparation = usePromise(() => application.prepare(), [application])
