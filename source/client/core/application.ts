@@ -5,7 +5,7 @@ import type { ProgramRelease, ProgramReleasePage } from "@server/core/program-re
 /** Client application exposing Setup capabilities as local operations. */
 export default class Application {
     public prepare() {
-        return context.localWindow.transaction({ duration: 240, easing: "ease-out" }).addSurface()
+        return context.localWindow.transaction({ duration: 240 }).addSurface()
     }
 
     public programRelease(program: string) {
@@ -31,13 +31,13 @@ export default class Application {
     }
 
     public async close() {
-        await context.localWindow.transaction({ duration: 240, easing: "ease-in", wait: true }).removeSurface()
+        await context.localWindow.transaction({ duration: 240, wait: true }).removeSurface()
 
         try {
             await (await context.process()).exit()
         } catch (exception) {
             await context.localWindow.transaction(
-                { duration: 240, easing: "ease-out", wait: true }
+                { duration: 240, wait: true }
             ).addSurface()
 
             throw exception
