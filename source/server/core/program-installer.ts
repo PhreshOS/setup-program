@@ -1,4 +1,4 @@
-import type { Program } from "@phreshos/server"
+import type { Program } from "@phreshos/core"
 import ProgramPackage, { type PreparedProgramPackage } from "./program-package"
 import type { ProgramRelease } from "./program-releases"
 
