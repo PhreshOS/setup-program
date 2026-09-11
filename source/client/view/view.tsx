@@ -29,9 +29,9 @@ function Setup() {
 function ResolvedSetup() {
     const appearance = useSystemAppearance()
     const colors = {
-        background: useResolveTheme(appearance.background),
-        foreground: useResolveTheme(appearance.foreground),
-        primary: useResolveTheme(appearance.primary)
+        background: useResolveTheme(appearance.colors.background),
+        foreground: useResolveTheme(appearance.colors.foreground),
+        primary: useResolveTheme(appearance.colors.primary)
     }
     const application = useMemo(() => new Application(), [])
     const preparation = usePromise(() => application.prepare(), [application])
