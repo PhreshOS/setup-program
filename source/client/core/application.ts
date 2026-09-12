@@ -1,11 +1,12 @@
-import { context } from "@phreshos/client"
+import { context, system } from "@phreshos/client"
 import type { InstallationSnapshot } from "@server/core/program-installer"
 import type { ProgramRelease, ProgramReleasePage } from "@server/core/program-releases"
 
 /** Client application exposing Setup capabilities as local operations. */
 export default class Application {
-    public prepare() {
-        return context.localWindow.transaction({ duration: 240 }).addSurface()
+    public async prepare() {
+        const { transaction } = await system.appearance.snapshot()
+        return context.localWindow.transaction(transaction).addSurface()
     }
 
     public programRelease(program: string) {
@@ -31,13 +32,14 @@ export default class Application {
     }
 
     public async close() {
-        await context.localWindow.transaction({ duration: 240, wait: true }).removeSurface()
+        const { transaction } = await system.appearance.snapshot()
+        await context.localWindow.transaction({ ...transaction, wait: true }).removeSurface()
 
         try {
             await (await context.process()).exit()
         } catch (exception) {
             await context.localWindow.transaction(
-                { duration: 240, wait: true }
+                { ...transaction, wait: true }
             ).addSurface()
 
             throw exception

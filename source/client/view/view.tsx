@@ -1,6 +1,6 @@
 import { DesktopProvider, SystemProvider, useDesktopPreferences, useSystemAppearance } from "@phreshos/react"
 import { desktop, system } from "@phreshos/client"
-import { AppearanceProvider, useResolveTheme } from "@phreshos/react-ui"
+import { AppearanceProvider, useThemedValue } from "@phreshos/react-ui"
 import Application from "@client/core/application"
 import usePromise from "@libs/react-promise"
 import type { InstallationSnapshot } from "@server/core/program-installer"
@@ -28,11 +28,7 @@ function Setup() {
 
 function ResolvedSetup() {
     const appearance = useSystemAppearance()
-    const colors = {
-        background: useResolveTheme(appearance.colors.background),
-        foreground: useResolveTheme(appearance.colors.foreground),
-        primary: useResolveTheme(appearance.colors.primary)
-    }
+    const colors = useThemedValue(appearance.colors)
     const application = useMemo(() => new Application(), [])
     const preparation = usePromise(() => application.prepare(), [application])
     const catalog = useCatalog(application)
