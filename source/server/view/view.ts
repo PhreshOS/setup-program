@@ -5,10 +5,6 @@ import ProgramReleases from "@server/core/program-releases"
 import { programReleaseListRequest, programReleaseRequest } from "./contract"
 
 export default async function view() {
-    const program = await context.program()
-
-    if (await program.installed()) await program.startup.enable()
-
     const releases = new ProgramReleases()
     const installer = new ProgramInstaller(
         releases,

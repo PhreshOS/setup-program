@@ -17,12 +17,13 @@ export default defineConfig({
     // system also uses it as the installed directory name. Unlike `name`, it
     // is an identifier and must remain stable across releases.
     identity: "setup",
+    startup: true,
 
     // Human-facing metadata shown by the desktop and authoring tools. None of
     // these values determines the Program's identity.
     name: "Setup",
     description: "The first welcome to PhreshOS.",
-    version: "0.1.39",
+    version: "0.1.40",
 
     // One authored PNG. Installation gives it a canonical name and the system
     // derives the standard hosted icon sizes from it.
