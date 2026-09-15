@@ -19,9 +19,9 @@ export default function View() {
 
 function Setup() {
     const appearance = useSystemAppearance()
-    const { theme } = useDesktopPreferences()
+    const preferences = useDesktopPreferences()
 
-    return <AppearanceProvider appearance={appearance} theme={theme}>
+    return <AppearanceProvider appearance={appearance} preferences={preferences}>
         <ResolvedSetup />
     </AppearanceProvider>
 }
