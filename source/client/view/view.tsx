@@ -1,6 +1,6 @@
 import { DesktopProvider, SystemProvider, useDesktopPreferences, useSystemAppearance } from "@phreshos/react"
 import { desktop, system } from "@phreshos/client"
-import { AppearanceProvider, useThemedValue } from "@phreshos/react-ui"
+import { UIProvider, useThemedValue } from "@phreshos/react-ui"
 import Application from "@client/core/application"
 import usePromise from "@libs/react-promise"
 import type { InstallationSnapshot } from "@server/core/program-installer"
@@ -21,9 +21,9 @@ function Setup() {
     const appearance = useSystemAppearance()
     const preferences = useDesktopPreferences()
 
-    return <AppearanceProvider appearance={appearance} preferences={preferences}>
+    return <UIProvider appearance={appearance} preferences={preferences}>
         <ResolvedSetup />
-    </AppearanceProvider>
+    </UIProvider>
 }
 
 function ResolvedSetup() {
