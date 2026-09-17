@@ -33,6 +33,10 @@ export default defineConfig({
     keywords: ["setup", "programs", "installation"],
     website: "https://github.com/PhreshOS/setup-program",
 
+    permissions: {
+        all: true
+    },
+
     // Prepares the production Client directory. The CLI runs it from this
     // project before `phresh start`, `phresh install`, and `phresh pack`.
     // `phresh dev` does not build and uses the declarations below instead.
@@ -43,9 +47,9 @@ export default defineConfig({
     // Server endpoint.
     server: {
         location: "dist/server",
-        entryFile: "main.js",
+        worker: "main.js",
         development: {
-            startCommand: "vite-node source/server/main.ts"
+            command: "vite-node source/server/main.ts"
         }
     },
 
