@@ -8,7 +8,7 @@ import { defineConfig } from "@phreshos/core"
  *
  * Production uses the built locations and commands declared below.
  * Development replaces only each endpoint's location and start command with
- * its `development` declaration. Packaging relocates the production files
+ * its development fields. Packaging relocates the production files
  * into the Program archive. Relative paths begin at this project directory.
  */
 export default defineConfig({
@@ -23,7 +23,7 @@ export default defineConfig({
     // these values determines the Program's identity.
     name: "Setup",
     description: "The first welcome to PhreshOS.",
-    version: "0.1.49",
+    version: "0.1.50",
 
     // One authored PNG. Installation gives it a canonical name and the system
     // derives the standard hosted icon sizes from it.
@@ -48,9 +48,7 @@ export default defineConfig({
     server: {
         location: "dist/server",
         worker: "main.js",
-        development: {
-            command: "vite-node source/server/main.ts"
-        }
+        devCommand: "vite-node source/server/main.ts"
     },
 
     // The Client declaration also defines the initial Window created for it.
@@ -82,11 +80,8 @@ export default defineConfig({
         // The initial Window may also be declared to open minimized.
         // minimize: true,
 
-        development: {
-
-            // The Project assigns an available local port, starts this command,
-            // and routes the Program asset path to the resulting server.
-            startCommand: "vite --config vite.client.ts"
-        }
+        // The Project assigns an available local port, starts this command,
+        // and routes the Program asset path to the resulting server.
+        devCommand: "vite --config vite.client.ts"
     }
 })
