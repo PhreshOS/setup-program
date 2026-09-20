@@ -19,8 +19,7 @@ test("build contract", async () => {
   const client = readdirSync("dist/client/assets").map(file => readFileSync(`dist/client/assets/${file}`, "utf8")).join("\n")
 
   assert.match(page, /<html/i)
-  assert.match(client, /windowLocalSurfaceAdd/)
-  assert.match(client, /windowLocalSurfaceRemove/)
+  assert.match(client, /windowPresentationFrame/)
   assert.match(client, /Programs/)
   assert.doesNotMatch(client, /Your space is ready/)
   assert.match(readFileSync("dist/server/main.js", "utf8"), /program\.releases/)

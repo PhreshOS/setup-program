@@ -23,7 +23,7 @@ export default defineConfig({
     // these values determines the Program's identity.
     name: "Setup",
     description: "The first welcome to PhreshOS.",
-    version: "0.1.50",
+    version: "0.1.51",
 
     // One authored PNG. Installation gives it a canonical name and the system
     // derives the standard hosted icon sizes from it.
@@ -61,7 +61,7 @@ export default defineConfig({
         location: "dist/client",
 
         // Initial Window values. Setup occupies the centered middle half of
-        // both workspace dimensions and uses the frameless over layer.
+        // both workspace dimensions and uses the over layer.
         title: "Setup",
         size: { width: "1/2", height: "1/2" },
         position: { x: "1/4", y: "1/4" },
@@ -74,8 +74,8 @@ export default defineConfig({
         // position: { x: "1/2 + 10", y: 40 },
 
         // `window` is the ordinary framed layer. `under` and `over` are
-        // structurally isolated, frameless desktop layers. Its iframe may
-        // explicitly request a representation-local Window Surface.
+        // structurally isolated desktop layers whose frames are controlled
+        // by their presentations.
 
         // The initial Window may also be declared to open minimized.
         // minimize: true,

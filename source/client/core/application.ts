@@ -6,7 +6,7 @@ import type { ProgramRelease, ProgramReleasePage } from "@server/core/program-re
 export default class Application {
     public async prepare() {
         const { transaction } = await system.appearance.snapshot()
-        return context.localWindow.transaction(transaction).addSurface()
+        return context.presentation.transaction(transaction).setFrame(true)
     }
 
     public programRelease(program: string) {
@@ -33,14 +33,12 @@ export default class Application {
 
     public async close() {
         const { transaction } = await system.appearance.snapshot()
-        await context.localWindow.transaction({ ...transaction, wait: true }).removeSurface()
+        await context.presentation.transactionAndWait(transaction).setFrame(false)
 
         try {
             await (await context.process()).exit()
         } catch (exception) {
-            await context.localWindow.transaction(
-                { ...transaction, wait: true }
-            ).addSurface()
+            await context.presentation.transactionAndWait(transaction).setFrame(true)
 
             throw exception
         }
