@@ -182,13 +182,13 @@ export default class ProgramReleases {
         const response = await this.fetcher(candidate.program, { headers: githubHeaders })
 
         if (!response.ok) {
-            throw new Error(`The ${candidate.identity} Program declaration could not be read (${response.status} ${response.statusText})`)
+            throw new Error(`The ${candidate.identity} Program definition could not be read (${response.status} ${response.statusText})`)
         }
 
         const program = programDeclaration.parse(await response.json())
 
         if (program.identity !== candidate.identity || program.version !== candidate.version) {
-            throw new Error(`The ${candidate.identity} Program declaration does not match its release`)
+            throw new Error(`The ${candidate.identity} Program definition does not match its release`)
         }
 
         if (program.icon && !candidate.icon) throw new Error(`The ${candidate.identity} Program release is missing its declared icon`)

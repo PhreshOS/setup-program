@@ -1,7 +1,7 @@
 import { defineConfig } from "@phreshos/core"
 
 /**
- * This is the Program's authoring declaration, not a runtime configuration
+ * This is the Program's authoring definition, not a runtime configuration
  * loaded by either endpoint. The Phresh CLI reads it and derives the concrete
  * Program description needed for development, production, installation, or
  * packaging.
@@ -17,13 +17,13 @@ export default defineConfig({
     // system also uses it as the installed directory name. Unlike `name`, it
     // is an identifier and must remain stable across releases.
     identity: "setup",
-    startup: true,
+    installLaunch: true,
 
     // Human-facing metadata shown by the desktop and authoring tools. None of
     // these values determines the Program's identity.
     name: "Setup",
     description: "The first welcome to PhreshOS.",
-    version: "0.1.51",
+    version: "0.1.52",
 
     // One authored PNG. Installation gives it a canonical name and the system
     // derives the standard hosted icon sizes from it.
@@ -39,7 +39,7 @@ export default defineConfig({
 
     // Prepares the production Client directory. The CLI runs it from this
     // project before `phresh start`, `phresh install`, and `phresh pack`.
-    // `phresh dev` does not build and uses the declarations below instead.
+    // `phresh dev` does not build and uses the development fields below instead.
     buildCommand: "vite-node scripts/build.ts",
 
     // The Server owns access to official release metadata. The Client never
