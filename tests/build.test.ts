@@ -20,6 +20,7 @@ test("build contract", async () => {
 
   assert.match(page, /<html/i)
   assert.match(client, /windowPresentationSurface/)
+  assert.match(client, /windowPresentationGeometry/)
   assert.match(client, /Programs/)
   assert.doesNotMatch(client, /Your space is ready/)
   assert.match(readFileSync("dist/server/main.js", "utf8"), /program\.releases/)

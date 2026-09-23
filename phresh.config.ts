@@ -23,7 +23,7 @@ export default defineConfig({
     // these values determines the Program's identity.
     name: "Setup",
     description: "The first welcome to PhreshOS.",
-    version: "0.1.54",
+    version: "0.1.55",
 
     // One authored PNG. Installation gives it a canonical name and the system
     // derives the standard hosted icon sizes from it.
@@ -51,17 +51,16 @@ export default defineConfig({
         devCommand: "vite-node source/server/main.ts"
     },
 
-    // The Client declaration also defines the initial Window created for it.
-    // It contains presentation defaults only; live Window state belongs to
-    // each running Process.
+    // The Client declaration also defines the initial authoritative Window
+    // state created for each running Process.
     client: {
 
         // Production directory containing the browser application's
         // `index.html` and all files reachable from it.
         location: "dist/client",
 
-        // Initial Window values. Setup occupies the centered middle half of
-        // both workspace dimensions and uses the over layer.
+        // Initial Window values. Setup interprets these values into its local
+        // presentation because it occupies the Program-controlled over layer.
         title: "Setup",
         size: { width: "1/2", height: "1/2" },
         position: { x: "1/4", y: "1/4" },

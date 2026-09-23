@@ -1,12 +1,29 @@
-import { context, system } from "@phreshos/client"
+import { context } from "@phreshos/client"
+import type { WindowState } from "@phreshos/core"
 import type { InstallationSnapshot } from "@server/core/program-installer"
 import type { ProgramRelease, ProgramReleasePage } from "@server/core/program-releases"
+import { ownsPresentation, presentationGeometry } from "./presentation"
 
 /** Client application exposing Setup capabilities as local operations. */
 export default class Application {
-    public async prepare() {
-        const { transaction } = await system.appearance.snapshot()
-        return context.presentation.transaction(transaction).setSurface(true)
+    private ownsPresentation = false
+    private surfaceVisible = false
+    private presentation = Promise.resolve()
+
+    public present(window: WindowState) {
+        return this.sequence(async () => {
+            this.ownsPresentation = ownsPresentation(window.layer)
+            if (!this.ownsPresentation) return
+
+            const transaction = context.presentation.transaction()
+            const changes = [transaction.setGeometry(presentationGeometry(window))]
+
+            if (!this.surfaceVisible) changes.push(transaction.setSurface(true))
+            if (window.front && !window.minimized) changes.push(context.presentation.raise())
+
+            await Promise.all(changes)
+            this.surfaceVisible = true
+        })
     }
 
     public programRelease(program: string) {
@@ -31,16 +48,31 @@ export default class Application {
         })
     }
 
-    public async close() {
-        const { transaction } = await system.appearance.snapshot()
-        await context.presentation.transactionAndWait(transaction).setSurface(false)
+    public close() {
+        return this.sequence(async () => {
+            if (this.ownsPresentation && this.surfaceVisible) {
+                await context.presentation.transactionAndWait().setSurface(false)
+                this.surfaceVisible = false
+            }
 
-        try {
-            await (await context.process()).exit()
-        } catch (exception) {
-            await context.presentation.transactionAndWait(transaction).setSurface(true)
+            try {
+                await (await context.process()).exit()
+            } catch (exception) {
+                if (this.ownsPresentation) {
+                    await context.presentation.transactionAndWait().setSurface(true)
+                    this.surfaceVisible = true
+                }
 
-            throw exception
-        }
+                throw exception
+            }
+        })
+    }
+
+    private sequence<Result>(operation: () => Promise<Result>) {
+        // Window events define projection order. Serializing their commands
+        // prevents an older async projection from overtaking a newer one.
+        const result = this.presentation.then(operation, operation)
+        this.presentation = result.then(() => undefined, () => undefined)
+        return result
     }
 }

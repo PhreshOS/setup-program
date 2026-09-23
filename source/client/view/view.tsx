@@ -1,8 +1,9 @@
-import { DesktopProvider, SystemProvider, useDesktopPreferences, useSystemAppearance } from "@phreshos/react"
-import { desktop, system } from "@phreshos/client"
+import { DesktopProvider, SystemProvider, useDesktopPreferences, useSystemAppearance, useWindowState } from "@phreshos/react"
+import { context, desktop, system } from "@phreshos/client"
 import { UIProvider, useThemedValue } from "@phreshos/react-ui"
 import Application from "@client/core/application"
 import usePromise from "@libs/react-promise"
+import type { WindowState } from "@phreshos/core"
 import type { InstallationSnapshot } from "@server/core/program-installer"
 import type { ProgramReleasePage } from "@server/core/program-releases"
 import { useEffect, useMemo, useRef, useState } from "react"
@@ -27,10 +28,26 @@ function Setup() {
 }
 
 function ResolvedSetup() {
+    const window = useWindowState(context.window)
+
+    return window
+        ? <PresentedSetup window={window} />
+        : <ResourceState message="Preparing Setup…" />
+}
+
+function PresentedSetup({ window }: Readonly<{ window: WindowState }>) {
     const appearance = useSystemAppearance()
     const colors = useThemedValue(appearance.colors)
     const application = useMemo(() => new Application(), [])
-    const preparation = usePromise(() => application.prepare(), [application])
+    const preparation = usePromise(() => application.present(window), [
+        application,
+        window.layer,
+        window.position,
+        window.size,
+        window.minimized,
+        window.maximized,
+        window.front
+    ])
     const catalog = useCatalog(application)
     const installation = useInstallation(application)
 
