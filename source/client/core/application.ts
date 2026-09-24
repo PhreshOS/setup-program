@@ -15,14 +15,19 @@ export default class Application {
             this.ownsPresentation = ownsPresentation(window.layer)
             if (!this.ownsPresentation) return
 
-            const transaction = context.presentation.transaction()
-            const changes = [transaction.setGeometry(presentationGeometry(window))]
+            const geometry = presentationGeometry(window)
 
-            if (!this.surfaceVisible) changes.push(transaction.setSurface(true))
-            if (window.front && !window.minimized) changes.push(context.presentation.raise())
+            if (!this.surfaceVisible) {
+                // A raw Client begins at zero geometry. Keep its content
+                // absent until the Program-owned entrance has reached its
+                // target; otherwise the iframe itself visibly grows from zero.
+                await context.presentation.transactionAndWait().setGeometry(geometry)
+                await context.presentation.transaction().setSurface(true)
+                this.surfaceVisible = true
+            }
+            else await context.presentation.transaction().setGeometry(geometry)
 
-            await Promise.all(changes)
-            this.surfaceVisible = true
+            if (window.front && !window.minimized) await context.presentation.raise()
         })
     }
 

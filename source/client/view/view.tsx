@@ -39,6 +39,7 @@ function PresentedSetup({ window }: Readonly<{ window: WindowState }>) {
     const appearance = useSystemAppearance()
     const colors = useThemedValue(appearance.colors)
     const application = useMemo(() => new Application(), [])
+    const presented = useRef(false)
     const preparation = usePromise(() => application.present(window), [
         application,
         window.layer,
@@ -51,12 +52,14 @@ function PresentedSetup({ window }: Readonly<{ window: WindowState }>) {
     const catalog = useCatalog(application)
     const installation = useInstallation(application)
 
-    if (preparation.isPending) return <ResourceState message="Preparing Setup…" />
-
     if (preparation.exception) return <ResourceState
         message={message(preparation.exception.current)}
         retry={() => void preparation.safeExecute()}
     />
+
+    if (!presented.current && preparation.isPending) return null
+
+    if (!preparation.isPending) presented.current = true
 
     return <App appearance={colors} close={() => application.close()} catalog={catalog} installation={installation} />
 }
