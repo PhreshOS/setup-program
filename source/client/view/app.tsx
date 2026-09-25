@@ -1,20 +1,17 @@
 import usePromise from "@libs/react-promise"
+import { Button, ProgressBar, ScrollArea, useAppearance, useThemedValue } from "@phreshos/react-ui"
 import type { InstallationSnapshot, ProgramInstallation } from "@server/core/program-installer"
 import type { ProgramRelease } from "@server/core/program-releases"
-import type { CSSProperties } from "react"
 
-export default function App({ appearance, close, catalog, installation }: Properties) {
+export default function App({ close, catalog, installation }: Properties) {
+    const foreground = useThemedValue(useAppearance().colors).foreground
     const closing = usePromise(close)
     const installing = installation.snapshot?.status === "running"
 
     return <main
         className="programs"
+        style={{ color: foreground }}
         data-closing={closing.isPending || undefined}
-        style={{
-            "--theme-background": appearance.background,
-            "--theme-foreground": appearance.foreground,
-            "--theme-primary": appearance.primary
-        } as CSSProperties}
     >
         <header className="programs-header">
             <div>
@@ -23,9 +20,9 @@ export default function App({ appearance, close, catalog, installation }: Proper
             </div>
 
             <div className="program-actions">
-                <button
-                    className="install-programs"
-                    type="button"
+                <Button
+                    color="primary:base"
+                    size="small"
                     disabled={
                         catalog.isPending
                         || catalog.exception !== undefined
@@ -34,19 +31,18 @@ export default function App({ appearance, close, catalog, installation }: Proper
                         || installing
                         || installation.snapshot?.status === "completed"
                     }
-                    onClick={installation.install}
+                    onPress={installation.install}
                 >
                     {installLabel(installation)}
-                </button>
+                </Button>
 
-                <button
-                    className="close-setup"
-                    type="button"
+                <Button
+                    size="small"
                     disabled={closing.isPending || installing}
-                    onClick={() => void closing.safeExecute()}
+                    onPress={() => void closing.safeExecute()}
                 >
                     {closing.isPending ? "Closing…" : "Close"}
-                </button>
+                </Button>
             </div>
         </header>
 
@@ -68,9 +64,15 @@ function OperationState({ closing, installation }: Readonly<{ closing: unknown, 
     const active = snapshot.programs.find(program => !terminal(program.status))
 
     return <div className="installation-progress" role="status">
-        <progress max={snapshot.total || 1} value={snapshot.completed} />
-        <span>{snapshot.completed} of {snapshot.total}</span>
-        <strong>{installationSummary(snapshot, active)}</strong>
+        <ProgressBar
+            color="primary:base"
+            size="small"
+            minValue={0}
+            maxValue={snapshot.total || 1}
+            value={snapshot.completed}
+            valueLabel={`${snapshot.completed} of ${snapshot.total}`}
+            label={installationSummary(snapshot, active)}
+        />
     </div>
 }
 
@@ -83,37 +85,41 @@ function ProgramCatalog({ catalog, installation }: Readonly<{ catalog: Catalog, 
             </span>}
         </header>
 
-        {catalog.isPending && <p className="catalog-state" role="status">Loading Programs…</p>}
+        {catalog.isPending && <div className="catalog-state" role="status">
+            <ProgressBar indeterminate aria-label="Loading Programs" size="small" />
+        </div>}
 
         {catalog.exception !== undefined && <div className="catalog-state" role="alert">
             <p>{message(catalog.exception)}</p>
-            <button type="button" onClick={catalog.retry}>Try again</button>
+            <Button size="small" onPress={catalog.retry}>Try again</Button>
         </div>}
 
         {!catalog.isPending && !catalog.exception && catalog.releases.length === 0 && <p className="catalog-state">
             No released Programs were found.
         </p>}
 
-        {catalog.releases.length > 0 && <div className="program-grid">
-            {catalog.releases.map(release => <ProgramEntry
-                key={release.identity}
-                release={release}
-                installation={installation?.programs.find(program => program.identity === release.identity)}
-            />)}
-        </div>}
+        {catalog.releases.length > 0 && <ScrollArea className="program-list">
+            <div className="program-grid">
+                {catalog.releases.map(release => <ProgramEntry
+                    key={release.identity}
+                    release={release}
+                    installation={installation?.programs.find(program => program.identity === release.identity)}
+                />)}
+            </div>
+        </ScrollArea>}
 
         {catalog.continuationException !== undefined && <p className="catalog-more-error" role="alert">
             {message(catalog.continuationException)}
         </p>}
 
-        {catalog.hasMore && !catalog.exception && <button
+        {catalog.hasMore && !catalog.exception && <Button
             className="catalog-more"
-            type="button"
+            size="small"
             disabled={catalog.isLoadingMore}
-            onClick={catalog.more}
+            onPress={catalog.more}
         >
             {catalog.isLoadingMore ? "Loading…" : "Load more"}
-        </button>}
+        </Button>}
     </section>
 }
 
@@ -146,7 +152,7 @@ function ProgramEntry({ release, installation }: Readonly<{ release: ProgramRele
             </div>}
             {installation && <div>
                 <dt>Installation</dt>
-                <dd className={`installation-${installation.status}`} title={installation.error ?? undefined}>
+                <dd title={installation.error ?? undefined}>
                     {installation.error ?? installation.status.replaceAll("-", " ")}
                 </dd>
             </div>}
@@ -193,7 +199,6 @@ function terminal(status: ProgramInstallation["status"]) {
 }
 
 type Properties = Readonly<{
-    appearance: Readonly<{ background: string, foreground: string, primary: string }>
     close: () => Promise<void>
     catalog: Catalog
     installation: Installation

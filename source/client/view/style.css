@@ -1,9 +1,5 @@
 :root {
     --unit: 0.5rem;
-    --theme-background: #edf8fc;
-    --theme-foreground: #183447;
-    --theme-primary: #4c9cff;
-    color: var(--theme-foreground);
     background: transparent;
     font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     font-synthesis: none;
@@ -25,20 +21,18 @@ body {
     overflow: hidden;
 }
 
-button { font: inherit; }
-
 .resource-state,
 .programs {
     width: 100%;
     height: 100%;
     min-height: 0;
-    color: var(--theme-foreground);
 }
 
 .resource-state {
     display: grid;
     place-content: center;
     justify-items: center;
+    grid-template-columns: minmax(0, min(20rem, 100%));
     gap: var(--unit);
     padding: calc(var(--unit) * 3);
     text-align: center;
@@ -68,7 +62,7 @@ button { font: inherit; }
 }
 
 .programs-eyebrow {
-    color: color-mix(in oklch, var(--theme-foreground) 52%, transparent);
+    color: color-mix(in oklch, currentColor 52%, transparent);
     font-size: 0.625rem;
     font-weight: 750;
     letter-spacing: 0.1em;
@@ -82,66 +76,14 @@ button { font: inherit; }
     letter-spacing: -0.025em;
 }
 
-.resource-state button,
-.install-programs,
-.close-setup,
-.catalog-state button,
-.catalog-more {
-    min-height: calc(var(--unit) * 4);
-    padding: var(--unit) calc(var(--unit) * 1.5);
-    border: 1px solid color-mix(in oklch, var(--theme-primary) 30%, transparent);
-    border-radius: var(--unit);
-    color: var(--theme-foreground);
-    background: color-mix(in oklch, var(--theme-primary) 10%, transparent);
-    font-size: 0.75rem;
-    font-weight: 650;
-    cursor: pointer;
-}
-
-.close-setup:disabled,
-.install-programs:disabled,
-.catalog-more:disabled {
-    cursor: default;
-    opacity: 0.6;
-}
-
-.install-programs {
-    color: color-mix(in oklch, var(--theme-primary) 72%, var(--theme-foreground));
-    background: color-mix(in oklch, var(--theme-primary) 18%, transparent);
-}
-
 .operation-error,
 .catalog-more-error {
     margin: 0;
-    color: #b42318;
     font-size: 0.75rem;
 }
 
 .installation-progress {
     min-width: 0;
-    display: grid;
-    grid-template-columns: minmax(calc(var(--unit) * 10), 1fr) auto minmax(0, auto);
-    align-items: center;
-    gap: var(--unit);
-    color: color-mix(in oklch, var(--theme-foreground) 62%, transparent);
-    font-size: 0.68rem;
-}
-
-.installation-progress progress {
-    width: 100%;
-    height: calc(var(--unit) / 1.5);
-    border: 0;
-    border-radius: 999px;
-    overflow: hidden;
-    accent-color: var(--theme-primary);
-}
-
-.installation-progress strong {
-    overflow: hidden;
-    color: var(--theme-foreground);
-    font-weight: 650;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
 .program-catalog {
@@ -157,21 +99,17 @@ button { font: inherit; }
 .program-catalog > header {
     min-height: calc(var(--unit) * 4);
     padding: 0 calc(var(--unit) / 2) var(--unit);
-    border-bottom: 1px solid color-mix(in oklch, var(--theme-foreground) 14%, transparent);
+    border-bottom: 1px solid color-mix(in oklch, currentColor 14%, transparent);
 }
 
 .program-catalog > header > span:first-child {
-    color: color-mix(in oklch, var(--theme-foreground) 64%, transparent);
+    color: color-mix(in oklch, currentColor 64%, transparent);
     font-size: 0.75rem;
     font-weight: 700;
 }
 
 .catalog-count {
     min-width: calc(var(--unit) * 3.5);
-    padding: calc(var(--unit) / 2) var(--unit);
-    border-radius: 999px;
-    color: var(--theme-primary);
-    background: color-mix(in oklch, var(--theme-primary) 12%, transparent);
     font-size: 0.75rem;
     font-weight: 700;
     text-align: center;
@@ -183,19 +121,23 @@ button { font: inherit; }
     align-content: center;
     justify-items: center;
     gap: var(--unit);
-    color: color-mix(in oklch, var(--theme-foreground) 64%, transparent);
+    width: min(20rem, 100%);
+    justify-self: center;
+    color: color-mix(in oklch, currentColor 64%, transparent);
     font-size: 0.8rem;
     text-align: center;
 }
 
 .catalog-state p { margin: 0; }
 
-.program-grid {
+.program-list {
     min-height: 0;
+}
+
+.program-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     align-content: start;
-    overflow-y: auto;
 }
 
 .program-entry {
@@ -205,7 +147,7 @@ button { font: inherit; }
     align-items: start;
     gap: calc(var(--unit) * 2);
     padding: calc(var(--unit) * 2) calc(var(--unit) / 2);
-    border-bottom: 1px solid color-mix(in oklch, var(--theme-foreground) 10%, transparent);
+    border-bottom: 1px solid color-mix(in oklch, currentColor 10%, transparent);
 }
 
 .program-icon {
@@ -234,14 +176,14 @@ button { font: inherit; }
 }
 
 .program-summary > header > span {
-    color: color-mix(in oklch, var(--theme-foreground) 56%, transparent);
+    color: color-mix(in oklch, currentColor 56%, transparent);
     font-size: 0.7rem;
     white-space: nowrap;
 }
 
 .program-identity {
     overflow: hidden;
-    color: color-mix(in oklch, var(--theme-foreground) 52%, transparent);
+    color: color-mix(in oklch, currentColor 52%, transparent);
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 0.62rem;
     font-weight: 500;
@@ -251,7 +193,7 @@ button { font: inherit; }
 
 .program-summary > p {
     margin: 0;
-    color: color-mix(in oklch, var(--theme-foreground) 68%, transparent);
+    color: color-mix(in oklch, currentColor 68%, transparent);
     font-size: 0.72rem;
     line-height: 1.35;
 }
@@ -269,7 +211,7 @@ button { font: inherit; }
 
 .program-values > span,
 .program-details dt {
-    color: color-mix(in oklch, var(--theme-foreground) 48%, transparent);
+    color: color-mix(in oklch, currentColor 48%, transparent);
     font-size: 0.58rem;
     font-weight: 700;
     letter-spacing: 0.06em;
@@ -279,7 +221,7 @@ button { font: inherit; }
 .program-values p {
     margin: 0.15rem 0 0;
     overflow: hidden;
-    color: color-mix(in oklch, var(--theme-foreground) 64%, transparent);
+    color: color-mix(in oklch, currentColor 64%, transparent);
     font-size: 0.65rem;
     line-height: 1.35;
     text-overflow: ellipsis;
@@ -301,15 +243,11 @@ button { font: inherit; }
     min-width: 0;
     margin: 0.15rem 0 0;
     overflow: hidden;
-    color: color-mix(in oklch, var(--theme-foreground) 64%, transparent);
+    color: color-mix(in oklch, currentColor 64%, transparent);
     font-size: 0.65rem;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-
-.program-details .installation-failed { color: #b42318; }
-.program-details .installation-installed,
-.program-details .installation-already-installed { color: #067647; }
 
 .catalog-more { justify-self: start; }
 

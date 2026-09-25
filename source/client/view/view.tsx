@@ -1,6 +1,6 @@
 import { DesktopProvider, SystemProvider, useDesktopPreferences, useSystemAppearance, useWindowState } from "@phreshos/react"
 import { context, desktop, system } from "@phreshos/client"
-import { UIProvider, useThemedValue } from "@phreshos/react-ui"
+import { Button, ProgressBar, UIProvider, useAppearance, useThemedValue } from "@phreshos/react-ui"
 import Application from "@client/core/application"
 import usePromise from "@libs/react-promise"
 import type { WindowState } from "@phreshos/core"
@@ -11,8 +11,8 @@ import App from "./app"
 import "./style.css"
 
 export default function View() {
-    return <SystemProvider system={system} fallback={<ResourceState message="Preparing Setup…" />}>
-        <DesktopProvider desktop={desktop} fallback={<ResourceState message="Preparing Desktop…" />}>
+    return <SystemProvider system={system} fallback={<ResourceState />}>
+        <DesktopProvider desktop={desktop} fallback={<ResourceState />}>
             <Setup />
         </DesktopProvider>
     </SystemProvider>
@@ -32,14 +32,13 @@ function ResolvedSetup() {
 
     return window
         ? <PresentedSetup window={window} />
-        : <ResourceState message="Preparing Setup…" />
+        : <ResourceState />
 }
 
 function PresentedSetup({ window }: Readonly<{ window: WindowState }>) {
-    const appearance = useSystemAppearance()
-    const colors = useThemedValue(appearance.colors)
     const application = useMemo(() => new Application(), [])
     const presented = useRef(false)
+    const revealed = useRef(false)
     const preparation = usePromise(() => application.present(window), [
         application,
         window.layer,
@@ -61,7 +60,15 @@ function PresentedSetup({ window }: Readonly<{ window: WindowState }>) {
 
     if (!preparation.isPending) presented.current = true
 
-    return <App appearance={colors} close={() => application.close()} catalog={catalog} installation={installation} />
+    // The first catalog and installation snapshots define one complete Setup view.
+    // Retrying or receiving later updates must not hide that view again.
+    if (!revealed.current && (catalog.isPending || installation.isPending)) {
+        return <ResourceState />
+    }
+
+    revealed.current = true
+
+    return <App close={() => application.close()} catalog={catalog} installation={installation} />
 }
 
 function useCatalog(application: Application) {
@@ -146,10 +153,12 @@ function useInstallation(application: Application) {
     }
 }
 
-function ResourceState({ message, retry }: Readonly<{ message: string, retry?: () => void }>) {
-    return <main className="resource-state" role="status">
-        <p>{message}</p>
-        {retry && <button type="button" onClick={retry}>Try again</button>}
+function ResourceState({ message, retry }: Readonly<{ message?: string, retry?: () => void }>) {
+    const foreground = useThemedValue(useAppearance().colors).foreground
+
+    return <main className="resource-state" role={retry ? "alert" : "status"} style={{ color: foreground }}>
+        {retry ? <p>{message}</p> : <ProgressBar indeterminate aria-label="Preparing Setup" size="small" />}
+        {retry && <Button size="small" onPress={retry}>Try again</Button>}
     </main>
 }
 
